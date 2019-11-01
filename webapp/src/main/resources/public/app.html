@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="app1">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title>Main Page</title>
+
+    <!-- Load all CSS Files -->
+
+
+    <!-- Load all NPM JavaScript Dependencies -->
+    <script src="./resources/node_modules/angular/angular.js"></script>
+    <script src="./resources/node_modules/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+
+    <!-- Load all Custom JavaScript files -->
+    <script src="./resources/config/app.js"></script>
+    <script src="./resources/config/routes.js"></script>
+
+
+    <style type="text/css">
+        .active {
+            color: red; font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Main Page</h2>
+
+
+<div>
+    <!-- The angular ui-sref directive binds a link tag to a state.                              -->
+    <!-- If the state has a URL, the directive will generate the href attribute for you -->
+    <a title="View page 1" ui-sref-active="active" ui-sref="page1">Page1</a> <br/>
+    <a title="view page 2" ui-sref-active="active" ui-sref="page2">Page2</a>
+</div>
+<br/>
+
+
+<ui-view>
+    <!-- The ui-router needs this to make it work -->
+</ui-view>
+
+</body>
+</html>
+

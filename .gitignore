@@ -1,0 +1,38 @@
+################################################################
+# Filename:  .gitignore
+# Tells Git which files/directories to ignore
+#
+#
+# WARNING: There should be no loading spaces
+################################################################
+
+# node modules
+webapp/src/main/resources/public/resources/node_modules/
+
+# Ignore the target/ directory
+target/
+
+# Project exclude paths
+/webapp/target/
+
+# Ignore everything under .idea
+.idea/
+
+*.iml
+
+## File-based project format:
+*.iws
+
+# Ignore Compiled class file
+*.class
+
+# Ignore Log file
+*.log
+
+# Ignore Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
