@@ -20,7 +20,7 @@ public class DashboardService
 
     public DashboardService()
     {
-        logger.debug("DashboardService() Constructor called");
+        logger.debug("DashboardService() constructor called");
     }
 
     @PostConstruct

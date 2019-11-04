@@ -2,6 +2,7 @@ package com.lessons.controllers;
 
 
 import com.lessons.services.DashboardService;
+import com.lessons.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class DashboardController {
 
     @Resource
     private DashboardService dashboardService;
+
+    @Resource
+    private UserService userService;
 
     public DashboardController()
     {
@@ -49,5 +53,26 @@ public class DashboardController {
                 .status(HttpStatus.OK)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(sDateTime);
+    }
+
+    /*************************************************************************
+     * REST endpoint /api/users/count
+     *
+     * @return an Integer object with total user count
+     *************************************************************************/
+    @RequestMapping(value = "/api/users/count", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> getUserCount() {
+        logger.debug("getDashboardDetails() started.");
+
+        // Get the date/time from the database
+        int userCount = userService.getCount();
+
+        String response = "User Count: " + userCount;
+
+        // Return the date/time string as plain-text
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(response);
     }
 }
