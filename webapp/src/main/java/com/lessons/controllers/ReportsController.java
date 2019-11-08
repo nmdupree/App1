@@ -1,5 +1,6 @@
 package com.lessons.controllers;
 
+import com.lessons.models.ReportByIdDTO;
 import com.lessons.models.ReportDTO;
 import com.lessons.services.ReportsService;
 import org.slf4j.Logger;
@@ -8,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -131,5 +129,27 @@ public class ReportsController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body("");
+    }
+
+    /*************************************************************************
+     * REST endpoint /api/reports
+     *
+     * @param reportId the id of the report to be returned
+     *************************************************************************/
+    @RequestMapping(value = "/api/reports/{reportId}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> getReportById(@PathVariable Integer reportId){
+        logger.debug("getReportById() called; id = {}", reportId);
+
+        if (!reportsService.doesReportIdExist(reportId)){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("The specified report id (" + reportId + ") does not exist.");
+        }
+
+        ReportByIdDTO reportByIdDTO = reportsService.getRecordById(reportId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(reportByIdDTO);
     }
 }

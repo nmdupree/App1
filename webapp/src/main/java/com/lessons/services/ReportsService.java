@@ -1,14 +1,18 @@
 package com.lessons.services;
 
+import com.lessons.models.ReportByIdDTO;
 import com.lessons.models.ReportDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.List;
 
 @Service
 public class ReportsService {
@@ -35,6 +39,18 @@ public class ReportsService {
         }
     }
 
+    public ReportByIdDTO getRecordById(Integer id){
+        logger.debug("ReportsService getRecordById called.");
+
+        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(ReportByIdDTO.class);
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        String sql =    "SELECT id, reviewed, description, priority, created_date, last_modified_date FROM reports\n" +
+                        "WHERE id = ?";
+        ReportByIdDTO reportByIdDTO = (ReportByIdDTO) jt.queryForObject(sql, rowMapper, id);
+
+        return reportByIdDTO;
+    }
+
     private int getNextTableId(){
         logger.debug("ReportsService getNextTableId() called");
 
@@ -45,5 +61,17 @@ public class ReportsService {
 
         return tableID;
     }
+
+    public boolean doesReportIdExist(Integer reportId){
+        logger.debug("ReportsService doesReportIdExist called");
+
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        String sql = "SELECT * FROM reports WHERE id = ?";
+        SqlRowSet sqlRowSet = jt.queryForRowSet(sql, reportId);
+
+        return sqlRowSet.next();
+    }
+
+
 
 }
