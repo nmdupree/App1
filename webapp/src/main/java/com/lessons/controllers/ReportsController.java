@@ -152,4 +152,35 @@ public class ReportsController {
                 .status(HttpStatus.OK)
                 .body(reportByIdDTO);
     }
+
+    /*************************************************************************
+     * REST endpoint /api/reports
+     *
+     * @param reportId the id of the report to be deleted
+     *************************************************************************/
+    @RequestMapping(value = "/api/reports/{reportId}", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<?> deleteReportById(@PathVariable Integer reportId){
+        logger.debug("deleteReportById() called; id = {}", reportId);
+
+
+        if (reportId < 1 || !reportsService.doesReportIdExist(reportId)){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("The specified report id (" + reportId + ") does not exist.");
+        }
+
+        int rowsDeleted = reportsService.deleteRecordById(reportId);
+
+        if(rowsDeleted == 0) {
+            logger.warn("Checks passed but failed to delete 1 record as expected.");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_MODIFIED)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The requested report matching id = " + reportId + "was not deleted.");
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("");
+    }
 }

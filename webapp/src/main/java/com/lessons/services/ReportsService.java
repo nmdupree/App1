@@ -2,6 +2,7 @@ package com.lessons.services;
 
 import com.lessons.models.ReportByIdDTO;
 import com.lessons.models.ReportDTO;
+import jdk.nashorn.internal.scripts.JD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -51,6 +52,17 @@ public class ReportsService {
         return reportByIdDTO;
     }
 
+    public int deleteRecordById(Integer id){
+        logger.debug("ReportsService deleteRecordById() called");
+
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        String sql = "DELETE FROM reports WHERE id = ?";
+
+        int rowsUpdated = jt.update(sql, id);
+
+        return rowsUpdated;
+    }
+
     private int getNextTableId(){
         logger.debug("ReportsService getNextTableId() called");
 
@@ -62,7 +74,7 @@ public class ReportsService {
         return tableID;
     }
 
-    public boolean doesReportIdExist(Integer reportId){
+    public boolean doesReportIdExist(int reportId){
         logger.debug("ReportsService doesReportIdExist called");
 
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
