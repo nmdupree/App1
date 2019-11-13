@@ -1,7 +1,8 @@
 package com.lessons.controllers;
 
 import com.lessons.models.ReportByIdDTO;
-import com.lessons.models.ReportDTO;
+import com.lessons.models.AddReportDTO;
+import com.lessons.models.UpdateReportDTO;
 import com.lessons.services.ReportsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,14 +118,14 @@ public class ReportsController {
     /*************************************************************************
      * REST endpoint /api/reports/add
      *
-     * @param reportDTO via JSON body containing key-value pairs for
+     * @param addReportDTO via JSON body containing key-value pairs for
      *                  description, priority, and reviewed
      *************************************************************************/
     @RequestMapping(value = "/api/reports/add", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> addReport(@RequestBody ReportDTO reportDTO){
-        logger.debug("addReport() called; reportDTO = {}", reportDTO);
+    public ResponseEntity<?> addReport(@RequestBody AddReportDTO addReportDTO){
+        logger.debug("addReport() called; reportDTO = {}", addReportDTO);
 
-        reportsService.addRecord(reportDTO);
+        reportsService.addRecord(addReportDTO);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -181,6 +182,33 @@ public class ReportsController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.TEXT_PLAIN)
+                .body("");
+    }
+
+    /*************************************************************************
+     * REST endpoint /api/reports/update
+     *
+     * @param updateReportDTO via JSON body containing key-value pairs for
+     *                        id, description, version, priority, display_name,
+     *                        and reference_source
+     *************************************************************************/
+    @RequestMapping(value = "/api/reports/update", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> updateReport(@RequestBody UpdateReportDTO updateReportDTO) {
+        logger.debug("updateReport() called; updateReportDTO = {}", updateReportDTO);
+
+        int reportId = updateReportDTO.getId();
+
+        if (reportId < 1 || !reportsService.doesReportIdExist(reportId)) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("The specified report id (" + reportId + ") does not exist.");
+        }
+
+        //reportsService.updateRecord(updateReportDTO);
+        reportsService.updateRecordWithNamedVariables(updateReportDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body("");
     }
 }

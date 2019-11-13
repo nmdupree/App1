@@ -1,6 +1,6 @@
 package com.lessons.models;
 
-public class ReportDTO {
+public class AddReportDTO {
 
     private String description;
     private Boolean reviewed;
