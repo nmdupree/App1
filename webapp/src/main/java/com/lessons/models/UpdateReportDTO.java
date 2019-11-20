@@ -4,7 +4,7 @@ public class UpdateReportDTO {
 
     private int id;
     private String description;
-    private Integer version;
+    private int version;
     private Integer priority;
     private String display_name;
     private Integer reference_source;

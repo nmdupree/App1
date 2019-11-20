@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Controller("com.lessons.controllers.ReportsController")
 public class ReportsController {
@@ -204,11 +205,29 @@ public class ReportsController {
                     .body("The specified report id (" + reportId + ") does not exist.");
         }
 
-        //reportsService.updateRecord(updateReportDTO);
-        reportsService.updateRecordWithNamedVariables(updateReportDTO);
+        int version = updateReportDTO.getVersion();
+
+        if (!reportsService.isLatestVersion(version, reportId)){
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Version Mismatch: This record has a more recent version ID than supplied with your" +
+                            "update request. The update failed.");
+        }
+
+        // Update record with bind variables
+        // reportsService.updateRecord(updateReportDTO);
+
+        // Update record with named variables
+        //Map<String, Object> rowsetMap =  reportsService.updateRecordWithNamedVariables(updateReportDTO);
+        //reportsService.updateReportsAudit(rowsetMap, "Yo Mama");
+
+        // Update record in a transaction and audit the update
+        reportsService.updateRecordTransaction(updateReportDTO, "Pikachu");
+
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("");
     }
+
 }

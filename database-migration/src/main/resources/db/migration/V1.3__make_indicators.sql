@@ -1,5 +1,5 @@
 --------------------------------------------------------------
--- Filename:  V1.5__indicators_table.sql
+-- Filename:  V1.3.__make_indicators.sql
 --------------------------------------------------------------
 
 CREATE TABLE indicators
