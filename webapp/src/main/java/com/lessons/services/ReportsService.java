@@ -5,6 +5,7 @@ import com.lessons.models.AddReportDTO;
 import com.lessons.models.UpdateReportDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,6 +28,12 @@ public class ReportsService {
 
     @Resource
     private DataSource dataSource;
+
+    @Value("${bypass.id}")
+    private int bypassId;
+
+    @Value("${development.mode}")
+    private boolean developmentMode;
 
     public ReportsService() {
         logger.debug("ReportsService constructor called");

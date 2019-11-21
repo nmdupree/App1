@@ -5,12 +5,38 @@ name: app1
 server.servlet.context-path: /app1
 server.port: 8080
 
+spring.profiles.active: dev
+
 ###########################################################
 # Database Settings
 ##########################################################
 app.datasource:
   driver-class-name: org.postgresql.Driver
   url: jdbc:postgresql://localhost:5432/app1_db
-  username: app1_user
-  password: secret
+  username: ENC(qxYroU9H2D0/XCgWuAAjB6HI8fRn47Mf)
+  password: ENC(o6E0gqe2UrMHFqgX6mh9Fw==)
   maxPoolSize: 10
+
+
+development-mode: false
+
+###########################################################
+# Password Encodingse
+##########################################################
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    password: 'ab5823423464j1k2#!!6298-+'
+
+
+###########################################################
+# Profiles
+##########################################################
+---
+spring.profiles: dev
+development.mode: true
+bypass.id: 5
+---
+spring.profiles: prod
+development.mode: false
+bypass.id: 7
