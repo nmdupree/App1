@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -87,44 +88,24 @@ public class SetupTestRecords {
 
         long startTime = System.currentTimeMillis();
         // How many records should be added
-        int recordsCreated = 5;
+        int recordsCreated = 3000000;
+        int maxRecordsPerUpdate = 500000;
+        int totalLoops = recordsCreated/maxRecordsPerUpdate;
 
-        // Object needed to query the database
-        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        for (int i = 0; i < totalLoops; i++) {
 
-        // Create some strings to be manipulated by String.format and StringBuilder
-        String baseInsert = "INSERT INTO indicators (id, type, value) VALUES ";
-        String baseValue = "(nextval('seq_table_ids'), %d, '%s'),";
 
-        // Create a StringBuilder object
-        StringBuilder stringBuilder = new StringBuilder();
-        // Add the baseInsert String to the stringbuilder object
-        stringBuilder.append(baseInsert);
 
-        for (int i = 0; i < recordsCreated; i++){
-            // Determine random type and value
-            int indicatorType;
-            String indicatorValue;
-
-            if (getRandomBool() == true){
-                indicatorType = 3;
-                indicatorValue = "myDomain.com";
-            }
-            else{
-                indicatorType = 5;
-                indicatorValue = createFakeIp();
-            }
-
-            // Insert the randomized variables into the baseValue string using String.format
-            String modifiedValue = String.format(baseValue, indicatorType, indicatorValue);
-            // Append the formatted string to the stringBuilder object
-            stringBuilder.append(modifiedValue);
+            logger.debug("{} of {} Inserts Completed. Time elapsed: {}ms", i, totalLoops, System.currentTimeMillis() - startTime);
         }
-        String prelimSql = stringBuilder.toString();
-        String finalSql = StringUtils.substring(prelimSql, 0, prelimSql.length()-1);
-        jt.update(finalSql);
 
-        logger.debug("Total time elapsed: {}ms", System.currentTimeMillis() - startTime);
+        long totalMS = System.currentTimeMillis() - startTime;
+        String timeElapsed = String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(totalMS),
+                TimeUnit.MILLISECONDS.toSeconds(totalMS) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMS))
+        );
+
+        logger.debug("Total time elapsed: {}", timeElapsed);
     }
 
     private int getRandomInt(int min, int max){
@@ -148,6 +129,54 @@ public class SetupTestRecords {
 
         String ipAddress = firstOct + "." + secondOct + "." + thirdOct + "." + fourthOct;
         return ipAddress;
+    }
+
+    private void updateDatabase(String sql){
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        jt.update(sql);
+    }
+
+    private String createIndicatorsInsertStatement(int totalInserts){
+        StringBuilder sb = new StringBuilder();
+        String baseSql = "INSERT INTO indicators (id, type, value) VALUES ";
+        sb.append(baseSql);
+        sb.append(createMultiLineIndicatorClause(totalInserts));
+
+        return sb.toString();
+    }
+
+    private String createMultiLineIndicatorClause(int totalLines){
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < totalLines; i++) {
+            sb.append(createIndicatorString());
+            if (i % 10000 == 0) {
+                logger.debug("{} of {} Statments Appended. ", i, totalLines);
+            }
+        }
+
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+
+    private String createIndicatorString(){
+        String baseSql = "(nextval('seq_table_ids'), %d, '%s'),";
+        // Determine random type and value
+        int indicatorType;
+        String indicatorValue;
+
+        if (getRandomBool() == true) {
+            indicatorType = 3;
+            indicatorValue = "myDomain.com";
+        } else {
+            indicatorType = 5;
+            indicatorValue = createFakeIp();
+        }
+
+        // Insert the randomized variables into the baseValue string using String.format
+        String indicatorSql = String.format(baseSql, indicatorType, indicatorValue);
+        return indicatorSql;
     }
 
 
