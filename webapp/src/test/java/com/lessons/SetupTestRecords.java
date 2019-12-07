@@ -11,6 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
@@ -88,15 +93,14 @@ public class SetupTestRecords {
 
         long startTime = System.currentTimeMillis();
         // How many records should be added
-        int recordsCreated = 3000000;
-        int maxRecordsPerUpdate = 500000;
-        int totalLoops = recordsCreated/maxRecordsPerUpdate;
+        int totalRecordsToCreate = 5;
+        int maxLoops = 1;
+        int totalRecordsPerUpdate = totalRecordsToCreate/maxLoops;
 
-        for (int i = 0; i < totalLoops; i++) {
-
-
-
-            logger.debug("{} of {} Inserts Completed. Time elapsed: {}ms", i, totalLoops, System.currentTimeMillis() - startTime);
+        for (int i = 0; i < maxLoops; i++) {
+            String sql = createIndicatorsInsertStatement(totalRecordsPerUpdate);
+            updateDatabase(sql);
+            logger.debug("{} of {} Inserts Completed. Time elapsed: {}ms", i, maxLoops, System.currentTimeMillis() - startTime);
         }
 
         long totalMS = System.currentTimeMillis() - startTime;
@@ -107,6 +111,62 @@ public class SetupTestRecords {
 
         logger.debug("Total time elapsed: {}", timeElapsed);
     }
+
+    private void updateDatabase(String sql){
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        jt.update(sql);
+    }
+
+    /*
+        Build methods for a multi-line insert into the reports table
+     */
+
+    /*
+        Build method for a multi-line insert into the indicators table
+     */
+
+    private String createIndicatorsInsertStatement(int totalLines){
+        StringBuilder sb = new StringBuilder();
+
+        // Add the INSERT statement
+        sb.append("INSERT INTO indicators (id, type, value) VALUES ");
+
+        // Generate multi-line randomized data
+        String baseSql = "(%d, %d, '%s'),";
+        int idStartValue = 1000;
+
+        for (int i = idStartValue; i < (totalLines + i); i++) {
+
+            // Determine random type and value
+            int indicatorType;
+            String indicatorValue;
+
+            if (getRandomBool() == true) {
+                indicatorType = 3;
+                indicatorValue = createFakeDomain();
+            } else {
+                indicatorType = 5;
+                indicatorValue = createFakeIp();
+            }
+
+            // Insert the randomized variables into the baseValue string using String.format
+            // Append that new string to the StringBuilder
+            sb.append(String.format(baseSql, i, indicatorType, indicatorValue));
+
+            if (i % 10000 == 0) {
+                logger.debug("{} of {} value clauses appended", i, totalLines);
+            }
+        }
+        // Strip out the extra comma
+        sb.deleteCharAt(sb.length() - 1);
+
+        return sb.toString();
+    }
+
+
+    /*
+        Random data generation methods
+     */
 
     private int getRandomInt(int min, int max){
         return (int) ((Math.random() * ((max - min) + 1)) + min);
@@ -131,53 +191,59 @@ public class SetupTestRecords {
         return ipAddress;
     }
 
-    private void updateDatabase(String sql){
-        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
-        jt.update(sql);
-    }
-
-    private String createIndicatorsInsertStatement(int totalInserts){
+    private String createFakeDomain(){
         StringBuilder sb = new StringBuilder();
-        String baseSql = "INSERT INTO indicators (id, type, value) VALUES ";
-        sb.append(baseSql);
-        sb.append(createMultiLineIndicatorClause(totalInserts));
+        List wordList = getDictionaryWords();
 
-        return sb.toString();
-    }
-
-    private String createMultiLineIndicatorClause(int totalLines){
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < totalLines; i++) {
-            sb.append(createIndicatorString());
-            if (i % 10000 == 0) {
-                logger.debug("{} of {} Statments Appended. ", i, totalLines);
+        if (wordList.size() > 0){
+            while (sb.length() < 5){
+                sb.append(wordList.get(getRandomInt(0, wordList.size()-1)));
+            }
+        }
+        else{
+            while (sb.length() < 12){
+                char aChar = (char) ('a' + getRandomInt(0, 25));
+                sb.append(aChar);
             }
         }
 
-        sb.deleteCharAt(sb.length() - 1);
+        int randInt = getRandomInt(0,4);
+        switch (randInt){
+            case 0:
+                sb.append(".org");
+                break;
+            case 1:
+                sb.append(".net");
+                break;
+            case 2:
+                sb.append(".edu");
+                break;
+            default:
+                sb.append(".com");
+        }
+
         return sb.toString();
     }
 
 
-    private String createIndicatorString(){
-        String baseSql = "(nextval('seq_table_ids'), %d, '%s'),";
-        // Determine random type and value
-        int indicatorType;
-        String indicatorValue;
+    private List<String> getDictionaryWords(){
+        List<String> wordList = new ArrayList<String>();
 
-        if (getRandomBool() == true) {
-            indicatorType = 3;
-            indicatorValue = "myDomain.com";
-        } else {
-            indicatorType = 5;
-            indicatorValue = createFakeIp();
+        try{
+            URL url = new URL("http://www-personal.umich.edu/~jlawler/wordlist");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+            String aWord;
+
+            while ((aWord = bufferedReader.readLine()) != null){
+                aWord = bufferedReader.readLine().toString();
+                wordList.add(aWord);
+            }
+            bufferedReader.close();
+        }catch (Exception e){
+            logger.warn("Could not pull dictionary from requested site.");
         }
 
-        // Insert the randomized variables into the baseValue string using String.format
-        String indicatorSql = String.format(baseSql, indicatorType, indicatorValue);
-        return indicatorSql;
+        return wordList;
     }
-
 
 }
