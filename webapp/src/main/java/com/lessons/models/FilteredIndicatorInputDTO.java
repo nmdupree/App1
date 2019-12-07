@@ -2,11 +2,11 @@ package com.lessons.models;
 
 import java.util.List;
 
-public class FilteredIndicatorInputParamsDTO {
+public class FilteredIndicatorInputDTO {
 
     private Integer pageSize;
     private Integer startingRecordNumber;
-    private List<String> sorting;
+    private List<SortDTO> sorting;
 
     public Integer getPageSize() {
         return pageSize;
@@ -24,11 +24,11 @@ public class FilteredIndicatorInputParamsDTO {
         this.startingRecordNumber = startingRecordNumber;
     }
 
-    public List<String> getSorting() {
+    public List<SortDTO> getSorting() {
         return sorting;
     }
 
-    public void setSorting(List<String> sorting) {
+    public void setSorting(List<SortDTO> sorting) {
         this.sorting = sorting;
     }
 }

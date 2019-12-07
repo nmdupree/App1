@@ -1,7 +1,8 @@
 package com.lessons.controllers;
 
-import com.lessons.models.FilteredIndicatorInputParamsDTO;
-import com.lessons.models.FilteredIndicatorsDTO;
+import com.lessons.models.FilteredIndicatorInputDTO;
+import com.lessons.models.SortDTO;
+import com.lessons.models.FilteredIndicatorReturnDTO;
 import com.lessons.models.IndicatorDTO;
 import com.lessons.services.IndicatorService;
 import org.slf4j.Logger;
@@ -53,19 +54,56 @@ public class IndicatorController {
      * @return a json formatted list of indicators
      *************************************************************************/
     @RequestMapping(value = "/api/indicators/filtered", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> getFilteredIndicators(@RequestBody FilteredIndicatorInputParamsDTO paramsDTO){
+    public ResponseEntity<?> getFilteredIndicators(@RequestBody FilteredIndicatorInputDTO paramsDTO){
         logger.debug("getFilteredIndicators() called");
 
         Integer pageSize = paramsDTO.getPageSize();
         Integer startingRecord = paramsDTO.getStartingRecordNumber();
-        List<String> sortFields = paramsDTO.getSorting();
+        List<SortDTO> sortParamsDTOS = paramsDTO.getSorting();
+
 
         // TODO: Insert null and bad data checks
+        if (pageSize == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The pageSize field is a required value.");
+        }
+        if (pageSize < 1){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The pageSize field must be a positive integer.");
+        }
+        if (startingRecord == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The startingRecord field is a required value.");
+        }
+        if (startingRecord < 1){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The startingRecord field must be a positive integer.");
+        }
+        if (!indicatorService.areSortFieldsPresent(sortParamsDTOS)){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("If sorting is defined, both field and direction must be supplied.");
+        }
+        if (!indicatorService.areSortDirectionsValid(sortParamsDTOS)){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("The sorting direction does not match approved values: ASC, DESC");
+        }
 
-        List<FilteredIndicatorsDTO> filteredIndicatorsDTOList = indicatorService.getFilteredIndicators(pageSize, startingRecord, sortFields);
+        List<FilteredIndicatorReturnDTO> filteredIndicatorReturnDTOList = indicatorService.getFilteredIndicators(pageSize, startingRecord, sortParamsDTOS);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(filteredIndicatorsDTOList);
+                .body(filteredIndicatorReturnDTOList);
     }
 }

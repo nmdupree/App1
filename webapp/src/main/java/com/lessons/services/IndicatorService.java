@@ -1,7 +1,7 @@
 package com.lessons.services;
 
-import com.lessons.models.FilteredIndicatorInputParamsDTO;
-import com.lessons.models.FilteredIndicatorsDTO;
+import com.lessons.models.SortDTO;
+import com.lessons.models.FilteredIndicatorReturnDTO;
 import com.lessons.models.IndicatorDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.logging.Filter;
 
 @Service
 public class IndicatorService {
@@ -48,32 +47,24 @@ public class IndicatorService {
         return indicatorDTOList;
     }
 
-    public List<FilteredIndicatorsDTO> getFilteredIndicators(int size, int startingRecord, List<String> sortFields){
+    public List<FilteredIndicatorReturnDTO> getFilteredIndicators(int size, int startingRecord, List<SortDTO> sortFields){
         logger.debug("IndicatorService getFilteredIndicators called");
 
-        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(FilteredIndicatorsDTO.class);
+        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(FilteredIndicatorReturnDTO.class);
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
         String sql = createFilteredIndicatorsSql(size, startingRecord, sortFields);
 
-        List<FilteredIndicatorsDTO> indicatorsDTOList = jt.query(sql, rowMapper);
+        List<FilteredIndicatorReturnDTO> indicatorsDTOList = jt.query(sql, rowMapper);
 
         return indicatorsDTOList;
     }
 
-    private String createFilteredIndicatorsSql(int size, int startingRecord, List<String> sortFields){
+    private String createFilteredIndicatorsSql(int size, int startingRecord, List<SortDTO> sortFields){
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT i.id, t.name AS type, i.value FROM indicators i JOIN indicator_types t ON i.type = t.id ");
+        sb.append(createSortOrderClause(sortFields));
 
-        if (!sortFields.isEmpty()){
-            sb.append("ORDER BY ");
-            sb.append(sortFields.get(0));
-            for (int i = 1; i < sortFields.size(); i++){
-                sb.append(",");
-                sb.append(sortFields.get(i));
-            }
-            sb.append(" ");
-        }
 
         sb.append("LIMIT ");
         sb.append(size);
@@ -81,6 +72,62 @@ public class IndicatorService {
         sb.append(startingRecord);
 
         return sb.toString();
+    }
+
+    private String createSortOrderClause(List<SortDTO> sortParamsDTOS){
+        StringBuilder sb = new StringBuilder();
+
+        if (sortParamsDTOS == null || sortParamsDTOS.isEmpty()){
+            return "";
+        }
+        sb.append("ORDER BY");
+        for (int i = 0; i < sortParamsDTOS.size(); i++){
+            SortDTO currentDto = sortParamsDTOS.get(i);
+            sb.append(" ");
+            sb.append(currentDto.getField());
+            sb.append(" ");
+            sb.append(currentDto.getDirection());
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.length() -1);
+        sb.append(" ");
+
+        return sb.toString();
+
+    }
+
+    public boolean areSortDirectionsValid(List<SortDTO> sortDTOList){
+
+        // If the list is null or empty, user elected not to use sorting
+        if (sortDTOList == null || sortDTOList.isEmpty()){
+            return true;
+        }
+
+        // If the direction field does not equal (case insensitive) "ASC" or "DESC", the request fails the checks
+        for (SortDTO sortDTO : sortDTOList){
+            String direction = sortDTO.getDirection();
+            if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean areSortFieldsPresent(List<SortDTO> sortDTOList){
+
+        // If the list is null or empty, user elected not to use sorting
+        if (sortDTOList == null || sortDTOList.isEmpty()){
+            return true;
+        }
+
+        // If the DTO exists but a field is empty, the request fails the checks
+        for (SortDTO sortDTO : sortDTOList){
+            if (sortDTO.getField() == null || sortDTO.getDirection() == null){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

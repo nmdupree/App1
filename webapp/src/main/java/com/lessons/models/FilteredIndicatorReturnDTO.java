@@ -1,6 +1,6 @@
 package com.lessons.models;
 
-public class FilteredIndicatorsDTO {
+public class FilteredIndicatorReturnDTO {
 
     private int id;
     private String type;
