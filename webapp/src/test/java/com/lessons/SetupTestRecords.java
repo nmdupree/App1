@@ -1,5 +1,6 @@
 package com.lessons;
 
+import com.lessons.services.ReportsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class SetupTestRecords {
     private DataSource dataSource;
 
     @Test
-    public void createTestReports(){
+    public void createTestReportsSlow(){
         logger.debug("SetupTestRecords createTestRecords() called");
         long startTime = System.currentTimeMillis();
         int recordsCreated = 50000;
@@ -52,33 +53,23 @@ public class SetupTestRecords {
     }
 
     @Test
-    public void createTestReports2(){
+    public void createTestReportsFast(){
         logger.debug("SetupTestRecords createTestRecords() called");
+
         long startTime = System.currentTimeMillis();
-        int recordsCreated = 5;
-        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        // How many records should be added
+        int totalRecordsToCreate = 50000;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) VALUES ");
+        String sql = createIndicatorsInsertStatement(totalRecordsToCreate);
+        updateDatabase(sql);
 
-        for (int i = 0; i < recordsCreated; i++){
+        long totalMS = System.currentTimeMillis() - startTime;
+        String timeElapsed = String.format("%d min, %d sec",
+                TimeUnit.MILLISECONDS.toMinutes(totalMS),
+                TimeUnit.MILLISECONDS.toSeconds(totalMS) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMS))
+        );
 
-            int version = getRandomInt(1,9);
-            String displayName = "display name " + i;
-            boolean reviewed = getRandomBool();
-            int priority = getRandomInt(1,5);
-
-            String valuesClause = "(nextval('seq_table_ids'), %d, '%s', %b, %d, now()), ";
-            sb.append(String.format(valuesClause, version, displayName, reviewed, priority));
-
-        }
-
-        String prelimSql = sb.toString();
-
-
-
-        //.update(sql);
-        logger.debug("Total time elapsed: {}ms", System.currentTimeMillis() - startTime);
+        logger.debug("Total time elapsed: {}", timeElapsed);
     }
 
     // HOMEWORK
@@ -93,14 +84,14 @@ public class SetupTestRecords {
 
         long startTime = System.currentTimeMillis();
         // How many records should be added
-        int totalRecordsToCreate = 5;
-        int maxLoops = 1;
+        int totalRecordsToCreate = 3000000;
+        int maxLoops = 6;
         int totalRecordsPerUpdate = totalRecordsToCreate/maxLoops;
 
         for (int i = 0; i < maxLoops; i++) {
             String sql = createIndicatorsInsertStatement(totalRecordsPerUpdate);
             updateDatabase(sql);
-            logger.debug("{} of {} Inserts Completed. Time elapsed: {}ms", i, maxLoops, System.currentTimeMillis() - startTime);
+            logger.debug("{} of {} Inserts Completed. Time elapsed: {}ms", i+1, maxLoops, System.currentTimeMillis() - startTime);
         }
 
         long totalMS = System.currentTimeMillis() - startTime;
@@ -112,6 +103,7 @@ public class SetupTestRecords {
         logger.debug("Total time elapsed: {}", timeElapsed);
     }
 
+
     private void updateDatabase(String sql){
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
         jt.update(sql);
@@ -120,22 +112,59 @@ public class SetupTestRecords {
     /*
         Build methods for a multi-line insert into the reports table
      */
+    private String createReportInsertStatement(int totalLines) {
+        StringBuilder sb = new StringBuilder();
+        List<String> wordList = getDictionaryWords();
 
+        // Add the INSERT statement
+        sb.append("INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) VALUES ");
+
+        // Generate multi-line randomized data
+        String baseSql = "(%d, %d, '%s', %b, %d, now()),";
+        int idStartValue = getNextTableId();
+        int idFinalValue = idStartValue + totalLines;
+
+        for (int i = idStartValue; i < idFinalValue; i++) {
+
+            // Determine random type and value
+            int version = getRandomInt(0,9);
+            String displayName = createFakeDescription(wordList);
+            boolean reviewed = getRandomBool();
+            int priority = getRandomInt(0,5);
+
+            // Insert the randomized variables into the baseValue string using String.format
+            // Append that new string to the StringBuilder
+            sb.append(String.format(baseSql, i, version, displayName, reviewed, priority));
+
+            if (i % 10000 == 0) {
+                logger.debug("{} of {} value clauses appended", i, totalLines);
+            }
+        }
+        // Strip out the extra comma
+        sb.deleteCharAt(sb.length() - 1);
+
+        // Update the sequence
+        setNextTableId(idFinalValue);
+
+        return sb.toString();
+    }
     /*
         Build method for a multi-line insert into the indicators table
      */
 
     private String createIndicatorsInsertStatement(int totalLines){
         StringBuilder sb = new StringBuilder();
+        List<String> wordList = getDictionaryWords();
 
         // Add the INSERT statement
         sb.append("INSERT INTO indicators (id, type, value) VALUES ");
 
         // Generate multi-line randomized data
         String baseSql = "(%d, %d, '%s'),";
-        int idStartValue = 1000;
+        int idStartValue = getNextTableId();
+        int idFinalValue = idStartValue + totalLines;
 
-        for (int i = idStartValue; i < (totalLines + i); i++) {
+        for (int i = idStartValue; i < idFinalValue; i++) {
 
             // Determine random type and value
             int indicatorType;
@@ -143,7 +172,7 @@ public class SetupTestRecords {
 
             if (getRandomBool() == true) {
                 indicatorType = 3;
-                indicatorValue = createFakeDomain();
+                indicatorValue = createFakeDomain(wordList);
             } else {
                 indicatorType = 5;
                 indicatorValue = createFakeIp();
@@ -159,6 +188,9 @@ public class SetupTestRecords {
         }
         // Strip out the extra comma
         sb.deleteCharAt(sb.length() - 1);
+
+        // Update the sequence
+        setNextTableId(idFinalValue);
 
         return sb.toString();
     }
@@ -191,9 +223,8 @@ public class SetupTestRecords {
         return ipAddress;
     }
 
-    private String createFakeDomain(){
+    private String createFakeDomain(List<String> wordList){
         StringBuilder sb = new StringBuilder();
-        List wordList = getDictionaryWords();
 
         if (wordList.size() > 0){
             while (sb.length() < 5){
@@ -225,6 +256,25 @@ public class SetupTestRecords {
         return sb.toString();
     }
 
+    private String createFakeDescription(List<String> wordList){
+        StringBuilder sb = new StringBuilder();
+
+        if (wordList.size() > 0){
+            sb.append(wordList.get(getRandomInt(0, wordList.size()-1)));
+            while (sb.length() < 40){
+                sb.append(" ");
+                sb.append(wordList.get(getRandomInt(0, wordList.size()-1)));
+            }
+        }
+        else{
+            while (sb.length() < 12){
+                char aChar = (char) ('a' + getRandomInt(0, 25));
+                sb.append(aChar);
+            }
+        }
+
+        return sb.toString();
+    }
 
     private List<String> getDictionaryWords(){
         List<String> wordList = new ArrayList<String>();
@@ -235,7 +285,7 @@ public class SetupTestRecords {
             String aWord;
 
             while ((aWord = bufferedReader.readLine()) != null){
-                aWord = bufferedReader.readLine().toString();
+                aWord = stripSpecialCharacters(bufferedReader.readLine().toString());
                 wordList.add(aWord);
             }
             bufferedReader.close();
@@ -245,5 +295,37 @@ public class SetupTestRecords {
 
         return wordList;
     }
+
+    private String stripSpecialCharacters(String aWord){
+        return aWord.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    private int getNextTableId() {
+
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        String sql = "SELECT nextval('seq_table_ids')";
+
+        int tableID = jt.queryForObject(sql, Integer.class);
+
+        return tableID;
+    }
+
+    private void setNextTableId(int nextTableId) {
+        logger.debug("ReportsService getNextTableId() called");
+
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        String sql = "ALTER SEQUENCE seq_table_ids RESTART WITH " + nextTableId;
+
+        jt.update(sql);
+    }
+
+    @Test
+    public void testStringMethod(){
+        String aWord = "asdf@#$%^&*()'";
+        String aNewWord = stripSpecialCharacters(aWord);
+
+        logger.debug("aNewWord = {}", aNewWord );
+    }
+
 
 }

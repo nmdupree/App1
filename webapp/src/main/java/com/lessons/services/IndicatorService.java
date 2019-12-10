@@ -62,7 +62,7 @@ public class IndicatorService {
     private String createFilteredIndicatorsSql(int size, int startingRecord, List<SortDTO> sortFields){
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT i.id, t.name AS type, i.value FROM indicators i JOIN indicator_types t ON i.type = t.id ");
+        sb.append("SELECT i.id, t.type AS type, i.value FROM indicators i JOIN types t ON i.type = t.id ");
         sb.append(createSortOrderClause(sortFields));
 
 
