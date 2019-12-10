@@ -1,0 +1,1 @@
+/tools/intelliJ/workspace/App1/database-migration/src/main/resources/db/migration/V1.2__tables.sql

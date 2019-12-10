@@ -14,6 +14,14 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <logger name="org.flywaydb" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="com.opentable.db" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <root level="WARN">
         <appender-ref ref="CONSOLE"/>
     </root>

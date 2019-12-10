@@ -1,0 +1,19 @@
+#################################################################3
+# Application.yaml file for running unit tests
+#
+#################################################################3
+
+# Set the active profile to be "test"
+# NOTE:  This is needed so that the embdded datasource is activated
+spring.profiles.active: test
+
+development.mode: true
+bypass.id: 5
+
+# The DataSourceConfig class has these as required properties
+# NOTE:  While we are not using them, they still must be set
+app.datasource:
+  driver-class-name: does.not.matter
+  url: does.not.matter
+  username: does.not.matter
+  password: does.not.matter

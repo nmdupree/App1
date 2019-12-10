@@ -98,6 +98,23 @@
       <version>42.1.4</version>
     </dependency>
 
+    <!-- Embedded Postgres -->
+    <!-- https://mvnrepository.com/artifact/com.opentable.components/otj-pg-embedded -->
+    <dependency>
+      <groupId>com.opentable.components</groupId>
+      <artifactId>otj-pg-embedded</artifactId>
+      <version>0.11.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Flyway core libraries -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>5.0.7</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <!-- Hikari Data Source / JDBC Connection Pool -->
       <groupId>com.zaxxer</groupId>
