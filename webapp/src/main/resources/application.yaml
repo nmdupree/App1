@@ -28,15 +28,43 @@ jasypt:
     algorithm: PBEWithMD5AndDES
     password: 'ab5823423464j1k2#!!6298-+'
 
-
 ###########################################################
-# Profiles
+# Some BS I was screwing with and now I can't delete it
+# because apparently I injected it somewhere and the app
+# won't compile without it. It's useless.
 ##########################################################
----
-spring.profiles: dev
-development.mode: true
 bypass.id: 5
+
 ---
+#######################################
+# D E V           P R O F I L E
+#######################################
+spring.profiles: dev
+
+server.port: 8080
+development.mode: true
+security.mode: whatever
+
+---
+#######################################
+# P R O D        P R O F I L E
+#######################################
 spring.profiles: prod
+
 development.mode: false
-bypass.id: 7
+security.mode: pki
+
+server:
+  port: 8443
+  ssl:
+    key-store: webapp/src/main/dev_resources/myKeystore.jks
+    key-store-password: changeit
+    key-store-type: JKS
+    client-auth: need
+    trust-store: webapp/src/main/dev_resources/myTruststore.jks
+    trust-store-password: changeit
+    trust-store-type: JKS
+
+# Secure the cookies
+server.servlet.session.cookie.secure: true
+server.servlet.session.cookie.http-only: true
