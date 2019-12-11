@@ -117,7 +117,7 @@ public class MyAuthenticationManager implements AuthenticationManager {
 
         // Create a list of granted authorities
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SUPER_USER"));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER_FOUND_IN_VALID_LIST_OF_USERS"));
 
         // Create a bogus UserInfo object

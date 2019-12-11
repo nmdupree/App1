@@ -1,6 +1,7 @@
 package com.lessons.controllers;
 
 
+import com.lessons.security.MyAuthorizationService;
 import com.lessons.services.DashboardService;
 import com.lessons.services.UserService;
 import org.slf4j.Logger;
@@ -8,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -24,6 +27,9 @@ public class DashboardController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private MyAuthorizationService myAuthorizationService;
 
     public DashboardController()
     {
@@ -41,9 +47,12 @@ public class DashboardController {
      *
      * @return a plain-old string with the database time (not JSON)
      *************************************************************************/
+    @PreAuthorize("hasRole('ROLE_SUPERUSER')")
     @RequestMapping(value = "/api/dashboard/time", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<?> getDateTime() {
         logger.debug("getDashboardDetails() started.");
+
+        logger.debug("The logged in username is: {}", myAuthorizationService.getUsername());
 
         // Get the date/time from the database
         String sDateTime = dashboardService.getDatabaseTime();

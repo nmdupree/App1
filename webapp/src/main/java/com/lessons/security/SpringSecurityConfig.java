@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringSecurityConfig.class);
@@ -43,8 +45,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private SubjectX509PrincipalExtractor subjectX509PrincipalExtractor;
 
-    @Resource
-    private MyAuthorizationFilter myAuthorizationFilter;
+//    @Resource
+//    private MyAuthorizationFilter myAuthorizationFilter;
 
     /**
      * Global configuration to set the authorization listener.
@@ -87,7 +89,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                     .requiresChannel().antMatchers("/**").requiresSecure()    // Redirect http to https
                     .and()
                     .addFilter(x509Filter())                                  // Pull the DN from the user's X509 certificate
-                    .addFilterAfter(myAuthorizationFilter, MyRequestHeaderAuthFilter.class)
+//                    .addFilterAfter(myAuthorizationFilter, MyRequestHeaderAuthFilter.class)
                     .headers().frameOptions().disable()                       // By default X-Frame-Options is set to denied.  Disable frameoptions to let this webapp work in OWF
                     .and()
                     .anonymous().disable();
@@ -104,7 +106,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                     .requiresChannel().antMatchers("/**").requiresInsecure()
                     .and()
                     .addFilter(requestHeaderAuthFilter)
-                    .addFilterAfter(myAuthorizationFilter, MyRequestHeaderAuthFilter.class)
+//                    .addFilterAfter(myAuthorizationFilter, MyRequestHeaderAuthFilter.class)
                     .headers().frameOptions().disable()                       // By default X-Frame-Options is set to denied.
                     .and()
                     .anonymous().disable();
