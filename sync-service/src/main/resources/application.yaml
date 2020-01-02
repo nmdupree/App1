@@ -1,0 +1,24 @@
+##########################################################
+# application.yaml   (used for development purposes)
+##########################################################
+
+# Set the Active profile to be dev
+spring.profiles.active: dev
+
+# Tell Spring to disable DataSource Auto Configuration (so you can run a springboot app without a datasource
+spring.autoconfigure:
+  exclude:
+  - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+es.url: http://localhost:9200
+
+###########################################################
+# Database Settings
+##########################################################
+app.datasource:
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/app1_db
+  username: app1_user
+  password: secret
+  maxPoolSize: 10

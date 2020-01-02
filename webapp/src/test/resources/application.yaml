@@ -9,6 +9,7 @@ spring.profiles.active: test
 
 development.mode: true
 bypass.id: 5
+security.mode: pki
 
 # The DataSourceConfig class has these as required properties
 # NOTE:  While we are not using them, they still must be set

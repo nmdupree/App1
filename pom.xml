@@ -11,6 +11,7 @@
   <modules>
     <module>webapp</module>
     <module>database-migration</module>
+      <module>sync-service</module>
   </modules>
 
   <name>App1</name>

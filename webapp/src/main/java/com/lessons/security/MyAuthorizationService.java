@@ -2,16 +2,12 @@ package com.lessons.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
+
 
 @Service("com.lessons.security.myAuthorizationService")
 public class MyAuthorizationService {
