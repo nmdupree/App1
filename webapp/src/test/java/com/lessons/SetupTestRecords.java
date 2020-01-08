@@ -33,7 +33,7 @@ public class SetupTestRecords {
         long startTime = System.currentTimeMillis();
         int recordsCreated = 50000;
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
-        String sql = "INSERT INTO reports (id, version, display_name, reviewed, priority, created_date)" +
+        String sql = "INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) " +
                      "VALUES (nextval('seq_table_ids'), ?, ?, ?, ?, now())";
 
         for (int i = 0; i < recordsCreated; i++) {
@@ -60,7 +60,7 @@ public class SetupTestRecords {
         // How many records should be added
         int totalRecordsToCreate = 50000;
 
-        String sql = createIndicatorsInsertStatement(totalRecordsToCreate);
+        String sql = createReportInsertStatement(totalRecordsToCreate);
         updateDatabase(sql);
 
         long totalMS = System.currentTimeMillis() - startTime;
@@ -117,10 +117,10 @@ public class SetupTestRecords {
         List<String> wordList = getDictionaryWords();
 
         // Add the INSERT statement
-        sb.append("INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) VALUES ");
+        sb.append("INSERT INTO reports (id, version, display_name, description, reviewed, priority, created_date) VALUES ");
 
         // Generate multi-line randomized data
-        String baseSql = "(%d, %d, '%s', %b, %d, now()),";
+        String baseSql = "(%d, %d, '%s', '%s', %b, %d, now()),";
         int idStartValue = getNextTableId();
         int idFinalValue = idStartValue + totalLines;
 
@@ -128,13 +128,14 @@ public class SetupTestRecords {
 
             // Determine random type and value
             int version = getRandomInt(0,9);
-            String displayName = createFakeDescription(wordList);
+            String displayName = createFakeString(wordList, 10);
+            String description  = createFakeString(wordList, 40);
             boolean reviewed = getRandomBool();
-            int priority = getRandomInt(0,5);
+            int priority = getRandomInt(0,2);
 
             // Insert the randomized variables into the baseValue string using String.format
             // Append that new string to the StringBuilder
-            sb.append(String.format(baseSql, i, version, displayName, reviewed, priority));
+            sb.append(String.format(baseSql, i, version, displayName, description, reviewed, priority));
 
             if (i % 10000 == 0) {
                 logger.debug("{} of {} value clauses appended", i, totalLines);
@@ -256,12 +257,12 @@ public class SetupTestRecords {
         return sb.toString();
     }
 
-    private String createFakeDescription(List<String> wordList){
+    private String createFakeString(List<String> wordList, int size){
         StringBuilder sb = new StringBuilder();
 
         if (wordList.size() > 0){
             sb.append(wordList.get(getRandomInt(0, wordList.size()-1)));
-            while (sb.length() < 40){
+            while (sb.length() < size){
                 sb.append(" ");
                 sb.append(wordList.get(getRandomInt(0, wordList.size()-1)));
             }

@@ -1,10 +1,17 @@
 package com.lessons.sync.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.lessons.sync.models.ReportDTO;
+//import com.sun.org.apache.xpath.internal.operations.String;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -13,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service("com.lessons.sync.services.RefreshService")
 public class RefreshService {
@@ -26,6 +34,17 @@ public class RefreshService {
 
     @Resource
     private DataSource dataSource;
+
+    private ObjectMapper objectMapper;
+
+    @PostConstruct
+    public void init(){
+
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
+
+    }
 
     /**
      * Refresh all mappings
@@ -63,11 +82,81 @@ public class RefreshService {
             String jsonMapping = readFileInClasspathToString(mappingFilename);
 
             // Create a new index
-            String esNewIndexName = aAliasName + getCurrentDateTime();
+            String esNewIndexName = aAliasName + "_" + getCurrentDateTime();
             elasticSearchService.createIndex(esNewIndexName, jsonMapping);
+
+            // Add data to the new index
+            addDataToIndex(esNewIndexName);
+
+            // Switch the alias over
+            setAlias(aAliasName, esNewIndexName);
+
+            // Cleanup the leftover indicies
+            cleanup(aAliasName, esNewIndexName);
         }
         finally {
             isRefreshInProgress = false;
+        }
+    }
+
+    private void setAlias(String alias, String newIndexName) throws Exception {
+        // Get existing indices used by the reports alias
+        List<String> indices = elasticSearchService.getIndexNamesWithAlias(alias);
+
+        // Construct JSON to make the switch
+        StringBuilder sbJsonAliasPost = new StringBuilder();
+        sbJsonAliasPost.append("{ \"actions\": [ {\"add\": { \"index\": \"");
+        sbJsonAliasPost.append(newIndexName);
+        sbJsonAliasPost.append("\", \"alias\": \"reports\" } }");
+
+        String baseRemove = ", {  \"remove\": { \"index\": \"%s\", \"alias\": \"reports\" } }";
+        for (String index : indices){
+            if (!index.equalsIgnoreCase(newIndexName)){
+                sbJsonAliasPost.append(String.format(baseRemove, index));
+            }
+        }
+
+        sbJsonAliasPost.append(" ] }");
+
+        // Submit the JSON to make the switch
+        elasticSearchService.swapAlias(sbJsonAliasPost.toString());
+    }
+
+
+
+    /**
+     * Pulls data from Postgres; builds a bulk index statement; posts to ES
+     * @param esNewIndexName the name of the index to receive the
+     */
+    private void addDataToIndex(String esNewIndexName) throws Exception{
+
+        String sql = "SELECT id, description, display_name FROM reports LIMIT 5";
+        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(ReportDTO.class);
+
+        StringBuilder bulkInsertSB = new StringBuilder();
+        String base1 = "{ \"index\": { \"_index\": \"%s\", \"_type\": \"record\", \"_id\": %d }} \n";
+
+        List<ReportDTO> reportList = jt.query(sql, rowMapper);
+
+        for (ReportDTO report : reportList){
+            bulkInsertSB.append(String.format(base1, esNewIndexName, report.getId()));
+            bulkInsertSB.append(objectMapper.writeValueAsString(report) + "\n");
+        }
+        elasticSearchService.submitBulkJson(bulkInsertSB.toString());
+    }
+
+    private void cleanup(String prefix, String indexToNotDelete) {
+        try {
+            List<String> listOfIndicies = elasticSearchService.getIndexNamesWithPrefix(prefix);
+
+            for(String index : listOfIndicies){
+                if (!index.equalsIgnoreCase(indexToNotDelete)){
+                    elasticSearchService.deleteIndex(index);
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("An exception occured during deletion of indicies:", e);
         }
     }
 
@@ -77,7 +166,7 @@ public class RefreshService {
      **************************************************************/
     private static String getCurrentDateTime()
     {
-        DateFormat df = new SimpleDateFormat("yyyymmdd_HHmmss");
+        DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
         return(df.format(new Date()));
     }
 
