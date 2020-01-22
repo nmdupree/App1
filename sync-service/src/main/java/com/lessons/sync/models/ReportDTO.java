@@ -1,11 +1,14 @@
 package com.lessons.sync.models;
 
+import java.sql.Timestamp;
+
 public class ReportDTO {
 
     private int id;
     private String displayName;
     private String description;
     private String priority;
+    private Timestamp createdDate;
 
     public int getId() {
         return id;
@@ -37,5 +40,13 @@ public class ReportDTO {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
     }
 }

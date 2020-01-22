@@ -6,6 +6,7 @@ server.servlet.context-path: /app1
 server.port: 8080
 
 spring.profiles.active: dev
+development-mode: false
 
 ###########################################################
 # Database Settings
@@ -17,9 +18,6 @@ app.datasource:
   password: ENC(o6E0gqe2UrMHFqgX6mh9Fw==)
   maxPoolSize: 10
 
-
-development-mode: false
-
 ###########################################################
 # Password Encodingse
 ##########################################################
@@ -27,6 +25,12 @@ jasypt:
   encryptor:
     algorithm: PBEWithMD5AndDES
     password: 'ab5823423464j1k2#!!6298-+'
+
+
+###########################################################
+# ElasticSearch Settings
+##########################################################
+es.url: http://localhost:9200
 
 ###########################################################
 # Some BS I was screwing with and now I can't delete it

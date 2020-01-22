@@ -42,7 +42,7 @@ public class RefreshService {
 
         this.objectMapper = new ObjectMapper();
         this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-
+        this.objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
 
     }
 
@@ -130,7 +130,7 @@ public class RefreshService {
      */
     private void addDataToIndex(String esNewIndexName) throws Exception{
 
-        String sql = "SELECT id, description, display_name FROM reports LIMIT 5";
+        String sql = "SELECT id, description, display_name, priority, created_date FROM view_all_reports LIMIT 5";
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
         BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(ReportDTO.class);
 

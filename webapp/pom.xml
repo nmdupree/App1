@@ -172,6 +172,20 @@
       <version>5.0.3.RELEASE</version>
     </dependency>
 
+    <dependency>
+      <!-- AsyncHttpClient Client implementation (used to make outgoing REST calls out to ES) -->
+      <groupId>com.ning</groupId>
+      <artifactId>async-http-client</artifactId>
+      <version>1.9.40</version>
+    </dependency>
+
+    <dependency>
+      <!-- StringUtils Dependency -->
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
+    </dependency>
+
   </dependencies>
 
 

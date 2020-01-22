@@ -5,7 +5,7 @@
 
 # Set the active profile to be "test"
 # NOTE:  This is needed so that the embdded datasource is activated
-spring.profiles.active: test
+spring.profiles.active: dev
 
 development.mode: true
 bypass.id: 5

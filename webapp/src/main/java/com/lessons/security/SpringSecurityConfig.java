@@ -111,6 +111,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .anonymous().disable();
         }
+
+        aHttpSecurity.csrf().disable();
     }
 
 

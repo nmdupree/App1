@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,10 @@ public class SetupTestRecords {
     @Resource
     private DataSource dataSource;
 
+
+    /**
+     * OUDATED :: DO NOT USE
+     */
     @Test
     public void createTestReportsSlow(){
         logger.debug("SetupTestRecords createTestRecords() called");
@@ -52,6 +57,11 @@ public class SetupTestRecords {
         // 6678.0ms
     }
 
+
+    /**
+     * NOTE ::  Set the profile in \webapp\src\test\resources\application.yaml
+     *          to "dev" to write to the production database
+     */
     @Test
     public void createTestReportsFast(){
         logger.debug("SetupTestRecords createTestRecords() called");
@@ -117,10 +127,10 @@ public class SetupTestRecords {
         List<String> wordList = getDictionaryWords();
 
         // Add the INSERT statement
-        sb.append("INSERT INTO reports (id, version, display_name, description, reviewed, priority, created_date) VALUES ");
+        sb.append("INSERT INTO reports (id, version, display_name, description, reviewed, reference_source, priority, created_date) VALUES ");
 
         // Generate multi-line randomized data
-        String baseSql = "(%d, %d, '%s', '%s', %b, %d, now()),";
+        String baseSql = "(%d, %d, '%s', '%s', %b, %d, %d, now()),";
         int idStartValue = getNextTableId();
         int idFinalValue = idStartValue + totalLines;
 
@@ -131,11 +141,12 @@ public class SetupTestRecords {
             String displayName = createFakeString(wordList, 10);
             String description  = createFakeString(wordList, 40);
             boolean reviewed = getRandomBool();
-            int priority = getRandomInt(0,2);
+            int priority = getRandomInt(1,4);
+            int referenceSource = getRandomInt(5,7);
 
             // Insert the randomized variables into the baseValue string using String.format
             // Append that new string to the StringBuilder
-            sb.append(String.format(baseSql, i, version, displayName, description, reviewed, priority));
+            sb.append(String.format(baseSql, i, version, displayName, description, reviewed, referenceSource, priority));
 
             if (i % 10000 == 0) {
                 logger.debug("{} of {} value clauses appended", i, totalLines);
@@ -200,6 +211,11 @@ public class SetupTestRecords {
     /*
         Random data generation methods
      */
+
+    private Timestamp createRandomTimestamp(){
+
+        return null;
+    }
 
     private int getRandomInt(int min, int max){
         return (int) ((Math.random() * ((max - min) + 1)) + min);
