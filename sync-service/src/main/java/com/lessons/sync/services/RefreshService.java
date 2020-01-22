@@ -6,10 +6,12 @@ import com.lessons.sync.models.ReportDTO;
 //import com.sun.org.apache.xpath.internal.operations.String;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -128,7 +130,7 @@ public class RefreshService {
      * Pulls data from Postgres; builds a bulk index statement; posts to ES
      * @param esNewIndexName the name of the index to receive the
      */
-    private void addDataToIndex(String esNewIndexName) throws Exception{
+    private void addDataToIndex(String esNewIndexName) throws Exception {
 
         String sql = "SELECT id, description, display_name, priority, created_date FROM view_all_reports LIMIT 5";
         JdbcTemplate jt = new JdbcTemplate(this.dataSource);
