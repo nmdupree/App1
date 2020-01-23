@@ -30,7 +30,7 @@ jasypt:
 ###########################################################
 # ElasticSearch Settings
 ##########################################################
-es.url: http://localhost:9200
+es.url: http://localhost:9201
 
 ###########################################################
 # Some BS I was screwing with and now I can't delete it

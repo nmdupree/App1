@@ -11,7 +11,7 @@ spring.autoconfigure:
   - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
-es.url: http://localhost:9200
+es.url: http://localhost:9201
 
 ###########################################################
 # Database Settings

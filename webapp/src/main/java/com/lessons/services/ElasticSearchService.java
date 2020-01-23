@@ -1,6 +1,7 @@
 package com.lessons.services;
 
 import com.lessons.config.ElasticSearchResources;
+import com.lessons.models.SearchElasticDTO;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -42,17 +43,21 @@ public class ElasticSearchService {
     }
 
 
-    public String queryIndex(String aIndexName, String aJsonQuery) throws Exception {
-        if (StringUtils.isEmpty(aIndexName)) {
-            throw new RuntimeException("The passed-in aIndexName is null or empty.");
+    public String queryIndex(SearchElasticDTO searchParams) throws Exception {
+
+        String indexName = searchParams.getIndexName();
+        if (StringUtils.isEmpty(indexName)){
+            throw new RuntimeException("The passed-in indexName is null or empty.");
         }
 
+        String jsonQuery = createJsonQuery(searchParams);
+
         // Make a synchronous POST call to ElasticSearch to create this an index
-        Response response = this.asyncHttpClient.preparePost(this.elasticSearchUrl + "/" + aIndexName + "_search")
+        Response response = this.asyncHttpClient.preparePost(this.elasticSearchUrl + "/" + indexName + "/_search")
                 .setRequestTimeout(this.ES_REQUEST_TIMEOUT_IN_MILLISECS)
                 .setHeader("accept", "application/json")
                 .setHeader("Content-Type", "application/json")
-                .setBody(aJsonQuery)
+                .setBody(jsonQuery)
                 .execute()
                 .get();
 
@@ -63,8 +68,54 @@ public class ElasticSearchService {
 
         String results = response.getResponseBody();
 
-        logger.info("Successfully created this ES index: {}", aIndexName);
-
         return results;
+    }
+
+    private String createJsonQuery(SearchElasticDTO searchParams) {
+        logger.debug("searchElasticIndex called");
+
+        String jsonQuery;
+        String queryBase;
+
+        if (StringUtils.isBlank(searchParams.getRawQuery())){
+            queryBase =
+                    "{\n" +
+                            "  \"size\": %d,\n" +
+                            "  \"from\": %d,\n" +
+                            "  \"query\": {\n" +
+                            "    \"match_all\": {}\n" +
+                            "  }\n" +
+                            "}";
+
+            jsonQuery = String.format(
+                    queryBase,
+                    searchParams.getPageSize(),
+                    searchParams.getStartingRecordNumber()
+            );
+
+        }
+        else {
+            queryBase =
+                    "{\n" +
+                    "  \"size\": %d,\n" +
+                    "  \"from\": %d,\n" +
+                    "  \"query\": {\n" +
+                    "    \"query_string\": {\n" +
+                    "      \"query\": \"%s\"\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}";
+
+            jsonQuery = String.format(
+                    queryBase,
+                    searchParams.getPageSize(),
+                    searchParams.getStartingRecordNumber(),
+                    searchParams.getRawQuery()
+            );
+        }
+
+        logger.debug("Query: {}", jsonQuery);
+
+        return jsonQuery;
     }
 }
