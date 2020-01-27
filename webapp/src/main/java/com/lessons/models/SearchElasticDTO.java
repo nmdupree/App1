@@ -2,6 +2,8 @@ package com.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 public class SearchElasticDTO {
 
     @JsonProperty("index_name")
@@ -15,6 +17,8 @@ public class SearchElasticDTO {
 
     @JsonProperty("starting_record_number")
     private int startingRecordNumber;
+
+    private List<SortDTO> sorts;
 
     public String getIndexName() {
         return indexName;
@@ -46,5 +50,13 @@ public class SearchElasticDTO {
 
     public void setStartingRecordNumber(int startingRecordNumber) {
         this.startingRecordNumber = startingRecordNumber;
+    }
+
+    public List<SortDTO> getSorts() {
+        return sorts;
+    }
+
+    public void setSorts(List<SortDTO> sorts) {
+        this.sorts = sorts;
     }
 }
