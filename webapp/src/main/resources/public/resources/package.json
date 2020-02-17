@@ -10,13 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@uirouter/angularjs": "^1.0.23",
-    "angular": "^1.7.8",
-    "angular-animate": "^1.7.8",
-    "angular-aria": "^1.7.8",
-    "angular-material": "^1.1.20",
-    "angular-messages": "^1.7.8",
-    "angular-resizable": "^1.2.0",
+    "@fortawesome/fontawesome-free": "5.12.0",
+    "@uirouter/angularjs": "1.0.25",
+    "angular": "1.7.9",
+    "angular-animate": "1.7.9",
+    "angular-aria": "1.7.9",
+    "angular-material": "1.1.21",
+    "angular-messages": "1.7.9",
+    "angular-resizable": "1.2.0",
+    "angular-sanitize": "1.7.9",
+    "angular-scroll": "1.0.2",
     "angular-ui-grid": "^4.8.3"
   }
 }

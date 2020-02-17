@@ -1,34 +1,50 @@
 (function(){
+    angular.module('app.routes', ['ui.router'])
+        .config([
+            '$stateProvider',
+            '$urlRouterProvider',
+            '$locationProvider',
+            Callback
+        ]);
 
-    /*******************************************************
-     * routes.js
-     *******************************************************/
-    angular.module('app1.routes', ['ui.router'])
-        .config(['$stateProvider', '$urlRouterProvider', routingCallback]);
-
-    function routingCallback($stateProvider, $urlRouterProvider) {
-        console.log('routingCallback() started.');
-
-        var PAGE_PREFIX = '/page';
+    function Callback($stateProvider, $urlRouterProvider, $locationProvider){
+        let URL_PAGE_PREFIX = '/page';
+        $locationProvider.html5Mode(true);
+        $locationProvider.hashPrefix('!');
 
         $stateProvider
-            .state('page1', getPage1State())
-            .state('page2', getPage2State());
+            .state('viewReports', getViewReportState())
+            .state('addReport',   getAddReportState());
 
 
-        function getPage1State() {
+        $urlRouterProvider.otherwise(URL_PAGE_PREFIX + '/404/');
+
+
+        function getViewReportState() {
             return {
-                url: PAGE_PREFIX + '/page1',
-                template: '<h2>page1</h2>'
+                url: URL_PAGE_PREFIX + '/reports/view',
+                templateUrl: './resources/features/reports/view_reports/index.html',
+                controller: 'viewReports',
+                controllerAs: 'viewReportsVM',
+                resolve: {
+
+                }
             }
         }
 
-        function getPage2State() {
+
+
+        function getAddReportState() {
             return {
-                url: PAGE_PREFIX + '/page2',
-                template: '<h2>page2</h2>'
+                url: URL_PAGE_PREFIX + '/reports/add',
+                templateUrl: './resources/features/reports/add_report/index.html',
+                controller: 'addReport',
+                controllerAs: 'addReportVM',
+                resolve: {
+
+                }
             }
         }
+
     }
-
 })();

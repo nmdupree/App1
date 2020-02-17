@@ -1,0 +1,400 @@
+* {
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+    border: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    color: #364150;
+}
+
+.bodyWrap {
+    position: relative;
+    display: flex;
+    border-top: 5px solid #364150;
+    height: 100%;
+}
+
+div.mainContent {
+    width: 100%;
+}
+
+.searchMeta {
+    padding: 2px 10px;
+    color: #777;
+}
+
+header.main {
+    background: #364150;
+    padding: 5px 0 0 0;
+}
+
+header.main div.nav-bar {
+    display: flex;
+    justify-content: space-between;
+}
+
+header.main .top-right-nav md-button {
+    color: #fff;
+}
+
+header.main .top-right-nav i {
+    color: #ccc;
+}
+
+header.main .top-right-nav i:hover {
+    color: #fff;
+}
+
+header.main .app1Logo {
+    width: 120px;
+    background: url("/app1/resources/images/logo.png") no-repeat;
+    background-size: auto 25px;
+    background-position: 20%;
+    height: 40px;
+    margin: 4px;
+    margin-top: 0;
+}
+
+header.main .app1Logo h1 {
+    color: #fff;
+    padding: 3px 0 5px 5px;
+    font-size: 1.7em;
+    margin: 0;
+    font-family: "Oxygen", san-serif;
+    text-decoration: none;
+    width: 300px;
+}
+
+.featureNote {
+    font-size: .7em;
+    text-align: center;
+    padding: 5px;
+}
+
+nav {
+    width: 210px;
+    background: #364150;
+    color: #fff;
+}
+
+nav div.links div {
+    cursor: pointer;
+}
+
+nav ul.links {
+    padding: 0;
+    margin: 0;
+}
+
+.menuToggle .svg-inline--fa {
+    color: #a8b9c9;
+}
+
+.menuToggle .svg-inline--fa:hover {
+    color: #fff;
+}
+
+div.navGroup {
+    position: relative;
+    border-bottom: 1px solid #4b5665;
+}
+
+div.navGroup div.navHeader.active div.title, div.navGroup div.nav div.links div.active {
+    color: #fff;
+    background: #5e6b7b;
+    font-weight: bold;
+}
+
+div.navGroup div.navHeader.active div.title, div.navGroup div.nav div.links a.active {
+    color: #fff;
+    background: linear-gradient(to right, #5e6b7b, rgba(94, 107, 123, 0));
+    font-weight: bold;
+}
+
+div.navGroup div.navHeader.toggled {
+    background: #037ac0;
+    color: #fff;
+    border-bottom: 1px solid #2f3744;
+}
+
+div.navGroup div.navHeader.toggled:hover {
+    background: #2f3744;
+}
+
+div.navGroup div.navHeader.toggled .title {
+    color: #fff;
+}
+
+div.navGroup div.navHeader.toggled div.icon .svg-inline--fa {
+    color: #fff;
+}
+
+div.navGroup div.navHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.navGroup div.navHeader:hover {
+    background: #2f3744;
+}
+
+div.navGroup div.navHeader div.icon {
+    margin-left: 5px;
+    padding: 7px;
+    text-align: center;
+}
+
+div.navGroup div.navHeader div.icon .svg-inline--fa {
+    color: #8798a8;
+}
+
+div.navGroup div.navHeader div.title {
+    flex: 5;
+    margin-left: 5px;
+    font-family: 'Oxygen', sans-serif;
+    font-size: .88em;
+    font-weight: bold;
+    color: #a8b9c9;
+    margin-bottom: 2px;
+    padding: 14px 7px 14px 0;
+    cursor: pointer;
+}
+
+div.navGroup div.nav {
+    display: flex;
+}
+
+div.navGroup div.nav div.spacer {
+    flex: 0.5;
+}
+
+div.navGroup div.nav div.links {
+    flex: 100;
+}
+
+div.navGroup div.nav div.links div {
+    font-size: .85em;
+    border-bottom: 1px solid #485d72;
+    cursor: pointer;
+    color: #fff;
+}
+
+div.navGroup div.nav div.links div:hover {
+    background: #3e4b5c;
+}
+
+div.navGroup div.nav div.links div:hover .svg-inline--fa {
+    display: block;
+    margin: 10px;
+    color: #a8b9c9;
+}
+
+div.navGroup div.nav div.links span a {
+    padding: 0;
+}
+
+div.navGroup div.nav div.links a {
+    padding: 14px;
+    font-size: 1em;
+    display: block;
+    color: #a8b9c9;
+    flex: 75;
+}
+
+div.navGroup div.nav div.links a:hover {
+    color: #fff;
+}
+
+div.navGroup div.nav div.links .svg-inline--fa {
+    margin: 10px;
+    display: none;
+}
+
+div.nav {
+    max-height: 0;
+    overflow: hidden;
+    height:auto;
+
+    transition: none !important;     /* No transition.  So, the menus open and close super fast */
+}
+
+div.nav a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+div.nav.toggled {
+    max-height: 40em;
+}
+
+div.active {
+    background: #03a6ee;
+}
+
+nav.toggled {
+    width: 40px;
+    align-items: flex-start;
+    overflow-y: visible;
+    background: #364150;
+    border-right: 1px solid #fff;
+}
+
+nav.toggled div.navGroup div.navHeader div.icon {
+    flex: 1;
+}
+
+nav.toggled div.navGroup div.navHeader div.icon .svg-inline--fa {
+    color: #fff;
+}
+
+nav.toggled div.navGroup div.navHeader div.title {
+    flex: 1;
+    max-width: 0;
+    font-size: 0;
+}
+
+nav.toggled div.navGroup div.navHeader div.title span {
+    padding: 0 7px;
+}
+
+nav.toggled div.navGroup div.nav, nav.toggled div.search {
+    display: none;
+}
+
+nav.toggled div.navGroup:hover div.navHeader {
+    background: #03a6ee;
+}
+
+nav.toggled div.navGroup:hover div.navHeader div.title {
+    top: 0;
+    left: 34px;
+    flex: 5;
+    margin-left: 1px;
+    font-size: .84em;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 2px;
+    padding: 6px;
+    display: block;
+    position: absolute;
+    width: 12vw;
+    max-width: 12vw;
+    background: #364150;
+    z-index: 2;
+    height: 42px;
+}
+
+nav.toggled div.navGroup:hover div.navHeader div.icon {
+    height: 34px;
+    color: #fff;
+}
+
+nav.toggled div.navGroup:hover div.nav {
+    overflow: visible;
+    width: 12vw;
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    display: block !important;
+    z-index: 2;
+}
+
+nav.toggled div.navGroup:hover div.nav ul.links {
+    overflow: visible;
+    width: 12vw;
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    display: block !important;
+    z-index: 99;
+}
+
+nav.toggled div.navGroup:hover div.nav ul.links li {
+    background: #364150;
+}
+
+nav.toggled div.navGroup:hover div.nav div.links {
+    background: #364150;
+}
+
+nav.toggled div.navGroup:hover div.nav div.links div.active {
+    position: relative;
+    background: #03a6ee;
+    color: #fff;
+}
+
+nav.toggled div.navGroup:hover div.nav div.links div:hover {
+    background: #3e4b5c;
+}
+
+.feature header {
+    width: 98%;
+    margin: auto;
+    padding: 5px 3px;
+    color: #777;
+}
+
+div.feature-container {
+    flex-direction: column;
+    margin: auto;
+}
+
+div.feature-container div.top-panel {
+    display: flex;
+    width: 100%;
+    height: 70vh;
+    min-height: 400px;
+    margin-bottom: 10px;
+}
+
+div.feature-container div.top-panel div.left-panel {
+    margin-right: 0.5vw;
+    padding: 5px;
+    flex: 5;
+    min-width: 20%;
+    max-width: 80%;
+}
+
+div.feature-container div.top-panel div.left-panel.resizable {
+    flex: 0 0 50%;
+}
+
+div.feature-container div.top-panel div.right-panel {
+    padding: 5px;
+    flex: 5;
+    background: #f9f9f9;
+}
+
+div.feature-container div.bottom-panel {
+    background: #fff;
+    margin-top: 10px;
+    height: auto;
+}
+
+.feature-container-with-tabs {
+    height: 73vh !important;
+}
+
+.contentWrap {
+    padding: 7px 7px 10px 7px;
+    background: #fff;
+    width: 98%;
+    margin: 0 auto 20px auto;
+}
+
+div.mainContent {
+    position: relative;
+}

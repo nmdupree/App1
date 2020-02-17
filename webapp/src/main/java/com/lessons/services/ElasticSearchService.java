@@ -1,5 +1,7 @@
 package com.lessons.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lessons.config.ElasticSearchResources;
 import com.lessons.models.SearchElasticDTO;
 import com.lessons.models.SortDTO;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service("com.lessons.sync.services.ElasticSearchService")
 public class ElasticSearchService {
@@ -44,7 +48,7 @@ public class ElasticSearchService {
 
         // In order to make outgoing calls to ElasticSearch you need 2 things:
         //  1) The elastic search url
-        //  2) The initialiaed AsyncHttpClient object
+        //  2) The initialized AsyncHttpClient object
         this.elasticSearchUrl = elasticSearchResources.getElasticSearchUrl();
         this.asyncHttpClient = elasticSearchResources.getAsyncHttpClient();
 
@@ -169,5 +173,38 @@ public class ElasticSearchService {
         else {
             return false;
         }
+    }
+
+    public List<String> getAllIndexes() throws Exception{
+
+        Response response = this.asyncHttpClient.prepareGet(this.elasticSearchUrl + "/_cat/indices/")
+                .setRequestTimeout(this.ES_REQUEST_TIMEOUT_IN_MILLISECS)
+                .setHeader("accept", "application/json")
+                .execute()
+                .get();
+
+        if (response.getStatusCode() != 200){
+            throw new RuntimeException("\"Error in getAllIndexes:  ES returned a status code of " + response.getStatusCode() + " with an error of: " + response.getResponseBody());
+        }
+
+        String jsonResponse = response.getResponseBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> listOfMaps = objectMapper.readValue(jsonResponse, new TypeReference<List<Map<String,Object>>>(){});
+
+        List<String> listOfIndices = new ArrayList<>();
+        for (Map<String, Object> currentMap : listOfMaps){
+            String indexName = (String)currentMap.get("index");
+            if (StringUtils.isNotEmpty(indexName) && !isExcludedIndex(indexName)){
+
+                listOfIndices.add(indexName);
+            }
+        }
+
+        return listOfIndices;
+    }
+
+    private boolean isExcludedIndex(String indexName){
+        String regexBase = "(csaac\\S*)|([.]\\S*)";
+        return indexName.matches(regexBase);
     }
 }
