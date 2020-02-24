@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller("com.lessons.controllers.WelcomeController")
 public class WelcomeController {
@@ -13,7 +14,7 @@ public class WelcomeController {
     /**********************************************************************
      * showDefaultPage()
      ***********************************************************************/
-    @RequestMapping("/")
+    @RequestMapping(value = {"/", "/page/**"}, method = RequestMethod.GET, produces = "text/plain")
     public String showDefaultPage()
     {
         logger.debug("showDefaultPage() started");
