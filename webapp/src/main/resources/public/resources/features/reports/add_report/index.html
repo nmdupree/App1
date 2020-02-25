@@ -38,17 +38,29 @@
 <!--                addReportForm.description.$invalid = {{addReportForm.description.$invalid}}-->
 <!--                addReportForm.description.$dirty = {{addReportForm.description.$dirty}}-->
 
-<!--    </pre>-->
+    <!--    </pre>-->
 
     <!-- Add Report Form -->
     <form name="addReportForm" novalidate class="css_form">
+
+        <!-- Name Box -->
+        <div layout="row" >
+            <md-input-container >
+                <label>Enter Report Name</label>
+                <input type="text" placeholder="Name" name="name" ng-model="addReportVM.new.name"
+                       required width="50%" ng-change="addReportVM.validate()"/>
+                <span ng-show="addReportForm.name.$touched && addReportForm.name.$error.customError">
+                Y u no type words good?
+            </span>
+            </md-input-container>
+        </div>
 
         <!-- Description Box -->
         <div layout="row" >
         <md-input-container >
             <label>Enter Report Description</label>
             <input type="text" placeholder="Description" name="description" ng-model="addReportVM.new.description"
-                required ng-minlength="3" />
+                required ng-minlength="3" width="50%" />
             <span ng-show="addReportForm.description.$touched && addReportForm.description.$error.required">
                 Enter a description
             </span>
@@ -78,6 +90,21 @@
         <md-switch ng-model="addReportVM.new.review" aria-label="reviewed">
             Reviewed {{ addReportVM.new.review }}
         </md-switch>
+
+        <!-- Email Box -->
+        <div layout="row" >
+            <md-input-container >
+                <label>Enter Report Description</label>
+                <input type="email" placeholder="E-Mail" name="email" ng-model="addReportVM.new.email"
+                       required width="50%"/>
+                <span ng-show="addReportForm.email.$touched && addReportForm.email.$error.required">
+                Enter an email address
+            </span>
+                <span ng-show="addReportForm.email.$touched && addReportForm.email.$error.email">
+                Email address not valid
+            </span>
+            </md-input-container>
+        </div>
 
         <!-- Reset Button-->
         <md-button class="md-warn md-raised" ng-click="addReportVM.clear()">

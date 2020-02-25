@@ -9,6 +9,7 @@
         let addReportVM = this;
         addReportVM.save = save;
         addReportVM.clear = clear;
+        addReportVM.validate = validate;
 
         //
         addReportVM.new = {};
@@ -71,6 +72,19 @@
             $scope.addReportForm.$setUntouched();
 
         }
+
+        function validate(){
+            console.log('validate() you entered: ', $scope.addReportForm.name.$modelValue);
+            let userString = $scope.addReportForm.name.$modelValue;
+
+            if (userString == 'good'){
+                $scope.addReportForm.name.$setValidity('customError', true);
+            }
+            else {
+                $scope.addReportForm.name.$setValidity('customError', false);
+            }
+        }
+
 
         console.log('addReport controller finished.');
     }
