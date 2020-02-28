@@ -34,6 +34,8 @@ public class CountermeasureController {
     @RequestMapping(value = "/api/countermeasures/add", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<?> addCountermeasure(@RequestBody CountermeasureAddDTO cmDTO){
 
+        logger.debug("addCountermeasure started");
+
         if(cmDTO.getValue().isEmpty()){
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
