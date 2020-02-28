@@ -15,7 +15,7 @@
         function getLookupWithTypeName(aType){
             console.log('LookupFactory.getLookupWithTypeName() started.');
 
-            return $http.get('./api/lookups/' + aType + '/id').then(function (results) {
+            return $http.get('./api/lookups/' + aType + '/display_order').then(function (results) {
                 // The REST call returned with a 200-299 status code
 
                 // So, return some data

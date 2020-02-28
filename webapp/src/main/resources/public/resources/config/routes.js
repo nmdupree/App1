@@ -15,7 +15,8 @@
         $stateProvider
             .state('viewReports', getViewReportState())
             .state('addReport',   getAddReportState())
-            .state('addIndicator',   getAddIndicatorState());
+            .state('addIndicator',   getAddIndicatorState())
+            .state('addCountermeasure',   getAddCountermeasureState());
 
 
         $urlRouterProvider.otherwise(URL_PAGE_PREFIX + '/404/');
@@ -60,6 +61,21 @@
                     classificationMap: function (LookupFactory) {
                         return LookupFactory.getLookupWithTypeName('classification')
                     }
+                }
+            }
+        }
+
+        function getAddCountermeasureState() {
+            return {
+                url: URL_PAGE_PREFIX + '/countermeasures/add',
+                templateUrl: './resources/features/countermeasures/add_countermeasure/index.html',
+                controller: 'addCountermeasure',
+                controllerAs: 'addCountermeasureVM',
+                resolve: {
+                    countermeasureStatus: function(LookupFactory) {
+                        return LookupFactory.getLookupWithTypeName( 'countermeasure_status')
+                    }
+
                 }
             }
         }

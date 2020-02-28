@@ -41,6 +41,7 @@
     <script src="./resources/features/reports/view_reports/main.controller.js"></script>
     <script src="./resources/features/reports/add_report/main.controller.js"></script>
     <script src="./resources/features/indicators/add_indicator/main.controller.js"></script>
+    <script src="./resources/features/countermeasures/add_countermeasure/main.controller.js"></script>
 </head>
 
 <body data-ng-controller='navController as navVM'>
@@ -191,6 +192,35 @@
             </div>
 
             <!-- MENU GROUP 3 -->
+            <!-- This is the expandable/collapsible Countermeasures menu -->
+            <div class="navGroup">
+                <!-- -->
+                <div class='navHeader' data-ng-class="{'toggled': countermeasuresToggled}"
+                     data-ng-click="countermeasuresToggled = !countermeasuresToggled">
+                    <div class='icon'>
+                        <md-icon class="fa fa-file-alt"></md-icon>
+                    </div>
+                    <div class="title" title="Manage Countermeasures" layout="row" layout-align="space-between center">
+                        <span>Countermeasures</span>
+                    </div>
+                </div>
+                <!-- -->
+                <div class='nav' data-ng-class="{'toggled': countermeasuresToggled}">
+                    <div class='spacer'></div>
+                    <div class="links">
+
+                        <div layout="row" layout-align="space-between-center">
+                            <a data-ui-sref-active="active" title="Add Indicator" ui-sref="addCountermeasure">Add Countermeasure</a>
+                            <span data-ng-click="navVM.openItemNewWindow('addCountermeasure')">
+                                <i class="fas fa-external-link-alt" style="color: #999;" title="Open Add Countermeasure in a new window"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU GROUP -->
             <div class="navGroup">
                 <div class='navHeader' data-ng-class="{'toggled': searchToggled}"
                      data-ng-click="searchToggled = !searchToggled">
