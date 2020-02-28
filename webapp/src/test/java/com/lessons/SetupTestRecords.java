@@ -190,9 +190,11 @@ public class SetupTestRecords {
                 indicatorValue = createFakeIp();
             }
 
+            int classificationValue = getRandomInt(11,13);
+
             // Insert the randomized variables into the baseValue string using String.format
             // Append that new string to the StringBuilder
-            sb.append(String.format(baseSql, i, indicatorType, indicatorValue));
+            sb.append(String.format(baseSql, i, indicatorType, indicatorValue, classificationValue));
 
             if (i % 10000 == 0) {
                 logger.debug("{} of {} value clauses appended", i, totalLines);
