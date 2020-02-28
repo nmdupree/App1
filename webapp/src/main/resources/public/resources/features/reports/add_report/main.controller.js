@@ -1,8 +1,8 @@
 (function(){
     angular.module('app.features')
-        .controller('addReport', ['$timeout', '$stateParams', '$scope', '$window', '$mdToast', 'ReportFactory', Callback])
+        .controller('addReport', ['$timeout', '$stateParams', '$scope', '$window', '$mdToast', 'ReportFactory', 'lookupMap', Callback])
 
-    function Callback($timeout, $stateParams, $scope, $window, $mdToast, ReportFactory) {
+    function Callback($timeout, $stateParams, $scope, $window, $mdToast, ReportFactory, lookupMap) {
         console.log('addReport controller started.');
 
         // Public Functions
@@ -11,29 +11,35 @@
         addReportVM.clear = clear;
         addReportVM.validate = validate;
 
-        //
-        addReportVM.new = {};
-        addReportVM.new.review = false;
+        window.document.title = "Add Report | APP1";
 
+        // Tracks whether a query is in progress, triggers the progress bar
         addReportVM.dataIsLoading = false;
 
+        // Object to hold form data,
+        addReportVM.new = {};
 
-        window.document.title = "Add Report | APP1";
+
+        // List of priority options
+        addReportVM.lookupData = lookupMap;
 
         addReportVM.$onInit = function() {
             console.log('addReport onInit() started.');
             console.log('addReport onInit() finished.');
         };
 
+        // Called when Add Report is clicked
         function save(){
+            // Start the progress bar
             addReportVM.dataIsLoading = true;
-            console.log("Save called.")
+            console.log("Save called.");
 
+            // Create an object for the DTO
             let addReportDTO = {
                 'description': addReportVM.new.description,
                 'priority': addReportVM.new.priority,
                 'reviewed': addReportVM.new.review
-            }
+            };
 
 
             ReportFactory.addReport(addReportDTO).then(function (res) {

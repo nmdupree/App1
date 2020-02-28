@@ -169,10 +169,10 @@ public class SetupTestRecords {
         List<String> wordList = getDictionaryWords();
 
         // Add the INSERT statement
-        sb.append("INSERT INTO indicators (id, type, value) VALUES ");
+        sb.append("INSERT INTO indicators (id, type, value, classification) VALUES ");
 
         // Generate multi-line randomized data
-        String baseSql = "(%d, %d, '%s'),";
+        String baseSql = "(%d, %d, '%s', %d),";
         int idStartValue = getNextTableId();
         int idFinalValue = idStartValue + totalLines;
 

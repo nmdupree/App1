@@ -1,0 +1,78 @@
+<div class="cm-vr feature">
+
+    <header layout="row" layout-align="space-between center">
+        <!-- Page Title -->
+        <div class="md-headline"><i class="fas fa-file-alt"></i>Add Indicator</div>
+    </header>
+
+    <!-- Progress Bar -->
+    <div class="progressBarWrapper">
+        <md-progress-linear ng-show="addIndicatorVM.dataIsLoading" md-mode="indeterminate"></md-progress-linear>
+    </div>
+
+
+    <pre>
+                    addIndicatorVM.new = {{addIndicatorVM.new | json}}
+                </pre>
+
+    <!-- Add Indicator Form -->
+    <form name="addIndicatorForm" novalidate>
+
+        <!-- Type Drop-Down -->
+        <div layout="row">
+            <md-input-container>
+                <label>Type</label>
+                <md-select name="type" ng-model="addIndicatorVM.new.type" required>
+                    <md-option ng-repeat="lookup in addIndicatorVM.indicatorTypes" ng-value="lookup">
+                        {{lookup.name}}
+                    </md-option>
+                </md-select>
+                <span ng-show="addIndicatorForm.type.$touched && addIndicatorForm.type.$error.required">
+                    This field is required.
+                </span>
+            </md-input-container>
+        </div>
+
+        <!-- Value Box -->
+        <div layout="row">
+            <md-input-container>
+                <label>Enter Indicator Value</label>
+                <input type="text" placeholder="Indicator Value" name="value" ng-model="addIndicatorVM.new.value"
+                required width="50%">
+                <span ng-show="addIndicatorForm.value.$touched && addIndicatorForm.value.$error.required">
+                    This field is required.
+                </span>
+            </md-input-container>
+        </div>
+
+        <!-- Classification Drop-Down -->
+        <div layout="row">
+            <md-input-container>
+                <label>Classification</label>
+                <md-select name="classification" ng-model="addIndicatorVM.new.classification" required="">
+                    <md-option ng-repeat="lookup in addIndicatorVM.classification" ng-value="lookup">
+                        {{lookup.name}}
+                    </md-option>
+                </md-select>
+                <span ng-show="addIndicatorForm.classification.$touched && addIndicatorForm.classification.$error.required">
+                    This field is required.
+                </span>
+            </md-input-container>
+        </div>
+
+        <!-- Reset Button-->
+        <md-button class="md-warn md-raised" ng-click="addIndicatorVM.clear()">
+            <md-icon class="fas fa-dragon"></md-icon>
+            Reset
+        </md-button>
+
+        <!-- Save Button -->
+        <md-button class="md-primary md-raised" ng-click="addIndicatorVM.save()" type="submit"
+                   ng-disabled="addIndicatorForm.$invalid">
+            <md-icon class="fas fa-plus"></md-icon>
+            Add Indicator
+        </md-button>
+
+    </form>
+
+</div>

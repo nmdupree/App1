@@ -34,11 +34,13 @@
 
     <!-- Load all factories *before* loading feature controllers -->
     <script src="./resources/factories/report.factory.js"></script>
+    <script src="./resources/factories/lookup.factory.js"></script>
 
     <!-- Load all JavaScript files for the various features -->
     <script src="./resources/modules/features.js"></script>
     <script src="./resources/features/reports/view_reports/main.controller.js"></script>
     <script src="./resources/features/reports/add_report/main.controller.js"></script>
+    <script src="./resources/features/indicators/add_indicator/main.controller.js"></script>
 </head>
 
 <body data-ng-controller='navController as navVM'>
@@ -160,6 +162,35 @@
             </div>
 
             <!-- MENU GROUP 2 -->
+            <!-- This is the expandable/collapsible Indicators menu -->
+            <div class="navGroup">
+                <!-- -->
+                <div class='navHeader' data-ng-class="{'toggled': indicatorsToggled}"
+                     data-ng-click="indicatorsToggled = !indicatorsToggled">
+                    <div class='icon'>
+                        <md-icon class="fa fa-file-alt"></md-icon>
+                    </div>
+                    <div class="title" title="Manage Indicators" layout="row" layout-align="space-between center">
+                        <span>Indicators</span>
+                    </div>
+                </div>
+                <!-- -->
+                <div class='nav' data-ng-class="{'toggled': indicatorsToggled}">
+                    <div class='spacer'></div>
+                    <div class="links">
+
+                        <div layout="row" layout-align="space-between-center">
+                            <a data-ui-sref-active="active" title="Add Indicator" ui-sref="addIndicator">Add Indicator</a>
+                            <span data-ng-click="navVM.openItemNewWindow('addIndicator')">
+                                <i class="fas fa-external-link-alt" style="color: #999;" title="Open Add Indicator in a new window"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU GROUP 3 -->
             <div class="navGroup">
                 <div class='navHeader' data-ng-class="{'toggled': searchToggled}"
                      data-ng-click="searchToggled = !searchToggled">

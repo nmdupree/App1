@@ -25,20 +25,11 @@
         <md-progress-linear ng-show="addReportVM.dataIsLoading" md-mode="indeterminate"></md-progress-linear>
     </div>
 
-<!--    <pre>-->
-<!--                -&#45;&#45;FORM-&#45;&#45;-->
-<!--                addReportForm.$pristine = {{addReportForm.$pristine}}-->
-<!--                addReportForm.$valid = {{addReportForm.$valid}}-->
-<!--                addReportForm.$invalid = {{addReportForm.$invalid}}-->
-<!--                addReportForm.$dirty = {{addReportForm.$dirty}}-->
+<pre>
 
-<!--                -&#45;&#45;DESCRIPTION-&#45;&#45;-->
-<!--                addReportForm.description.$pristine = {{addReportForm.description.$pristine}}-->
-<!--                addReportForm.description.$valid = {{addReportForm.description.$valid}}-->
-<!--                addReportForm.description.$invalid = {{addReportForm.description.$invalid}}-->
-<!--                addReportForm.description.$dirty = {{addReportForm.description.$dirty}}-->
+    addReportVM.new = {{addReportVM.new | json}}
 
-    <!--    </pre>-->
+</pre>
 
     <!-- Add Report Form -->
     <form name="addReportForm" novalidate class="css_form">
@@ -75,10 +66,8 @@
             <md-input-container >
                 <label>Enter Priority</label>
                 <md-select name="priority" ng-model="addReportVM.new.priority" required>
-                    <md-option value="1">Low</md-option>
-                    <md-option value="2">Medium</md-option>
-                    <md-option value="3">High</md-option>
-                    <md-option value="4">Critical</md-option>
+                    <md-option ng-repeat="lookup in addReportVM.lookupData" ng-value="lookup">{{lookup.name}}</md-option>
+
                 </md-select>
                 <span ng-show="addReportForm.priority.$touched && addReportForm.priority.$error.required">
                 Select priority

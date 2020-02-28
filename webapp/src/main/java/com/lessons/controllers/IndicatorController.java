@@ -106,4 +106,6 @@ public class IndicatorController {
                 .status(HttpStatus.OK)
                 .body(filteredIndicatorReturnDTOList);
     }
+
+
 }

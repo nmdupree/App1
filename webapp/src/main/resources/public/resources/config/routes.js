@@ -14,7 +14,8 @@
 
         $stateProvider
             .state('viewReports', getViewReportState())
-            .state('addReport',   getAddReportState());
+            .state('addReport',   getAddReportState())
+            .state('addIndicator',   getAddIndicatorState());
 
 
         $urlRouterProvider.otherwise(URL_PAGE_PREFIX + '/404/');
@@ -32,8 +33,6 @@
             }
         }
 
-
-
         function getAddReportState() {
             return {
                 url: URL_PAGE_PREFIX + '/reports/add',
@@ -41,7 +40,26 @@
                 controller: 'addReport',
                 controllerAs: 'addReportVM',
                 resolve: {
+                    lookupMap: function(LookupFactory) {
+                        return LookupFactory.getLookupWithTypeName( 'priority')
+                    }
+                }
+            }
+        }
 
+        function getAddIndicatorState() {
+            return {
+                url: URL_PAGE_PREFIX + '/indicators/add',
+                templateUrl: './resources/features/indicators/add_indicator/index.html',
+                controller: 'addIndicator',
+                controllerAs: 'addIndicatorVM',
+                resolve: {
+                    indicatorTypeMap: function (LookupFactory) {
+                        return LookupFactory.getLookupWithTypeName('indicator_type')
+                    },
+                    classificationMap: function (LookupFactory) {
+                        return LookupFactory.getLookupWithTypeName('classification')
+                    }
                 }
             }
         }
