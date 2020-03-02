@@ -2,6 +2,7 @@ package com.lessons.controllers;
 
 import com.lessons.models.CountermeasureAddDTO;
 import com.lessons.services.CountermeasureService;
+import com.lessons.services.LookupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ public class CountermeasureController {
 
     @Resource
     private CountermeasureService countermeasureService;
+    @Resource
+    private LookupService lookupService;
 
     public CountermeasureController(){
         logger.debug("CountermeasureController constructor called");
@@ -54,11 +57,19 @@ public class CountermeasureController {
                     .contentType(MediaType.TEXT_PLAIN)
                     .body("End date may not be null");
         }
-
+        if(cmDTO.getStatus() == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Countermeasure status may not be null");
+        }
+        if(lookupService.lookupIdExists(cmDTO.getStatus(), "countermeasure_status")){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Countermeasure status with id " + cmDTO.getStatus() + " does not exist.");
+        }
 
         countermeasureService.addCountermeasure(cmDTO);
-
-
 
         return ResponseEntity
                 .status(HttpStatus.OK)

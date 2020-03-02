@@ -8,7 +8,7 @@ public class CountermeasureAddDTO {
 
     private String value;
 
-    private int status;
+    private Integer status;
 
     @JsonProperty("start_date")
     private Timestamp startDate;
@@ -24,11 +24,11 @@ public class CountermeasureAddDTO {
         this.value = value;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

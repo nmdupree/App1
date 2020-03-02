@@ -61,4 +61,18 @@ public class LookupService {
         // Return the list of LookupDTO objects (or empty list)
         return lookups;
     }
+
+    public boolean lookupIdExists(Integer lookupId, String lookupType){
+
+        String sql = "SELECT * FROM lookup l " +
+                        "JOIN lookup_type lt on l.lookup_type = lt.id " +
+                        "WHERE l.id = ? " +
+                        "AND lt.name ilike ? ";
+
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+
+        SqlRowSet rs = jt.queryForRowSet(sql, lookupId, lookupType);
+
+        return rs.next();
+    }
 }

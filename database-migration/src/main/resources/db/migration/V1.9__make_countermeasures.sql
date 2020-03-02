@@ -11,5 +11,7 @@ CREATE TABLE countermeasures
     value               VARCHAR(255),
     status              INTEGER,
     start_date          TIMESTAMP,
-    end_date            TIMESTAMP
+    end_date            TIMESTAMP,
+
+CONSTRAINT status_fkey FOREIGN KEY (status) REFERENCES lookup(id)
 );

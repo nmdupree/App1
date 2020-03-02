@@ -1,5 +1,6 @@
 package com.lessons.services;
 
+import com.lessons.models.IndicatorAddDTO;
 import com.lessons.models.SortDTO;
 import com.lessons.models.FilteredIndicatorReturnDTO;
 import com.lessons.models.IndicatorDTO;
@@ -7,12 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class IndicatorService {
@@ -130,4 +134,19 @@ public class IndicatorService {
         return true;
     }
 
+    public void addIndicator(IndicatorAddDTO indicatorDTO) {
+
+        NamedParameterJdbcTemplate np = new NamedParameterJdbcTemplate(dataSource);
+
+        Map<String, Object> paramMap = new HashMap<>();
+
+        paramMap.put("type", indicatorDTO.getType());
+        paramMap.put("value", indicatorDTO.getValue());
+        paramMap.put("classification", indicatorDTO.getClassification());
+
+        String sql = "INSERT INTO indicators(id, type, value, classification) " +
+                        "VALUES (nextval('seq_table_ids'), :type, :value, :classification)";
+
+        np.update(sql,paramMap);
+    }
 }

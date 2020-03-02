@@ -1,10 +1,8 @@
 package com.lessons.controllers;
 
-import com.lessons.models.FilteredIndicatorInputDTO;
-import com.lessons.models.SortDTO;
-import com.lessons.models.FilteredIndicatorReturnDTO;
-import com.lessons.models.IndicatorDTO;
+import com.lessons.models.*;
 import com.lessons.services.IndicatorService;
+import com.lessons.services.LookupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,6 +23,9 @@ public class IndicatorController {
 
     @Resource
     private IndicatorService indicatorService;
+
+    @Resource
+    private LookupService lookupService;
 
     public IndicatorController(){logger.debug("IndicatorController constructor called");}
 
@@ -106,6 +107,49 @@ public class IndicatorController {
                 .status(HttpStatus.OK)
                 .body(filteredIndicatorReturnDTOList);
     }
+
+    @RequestMapping(value = "/api/indicators/add", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> addIndicator(@RequestBody IndicatorAddDTO indicatorDTO){
+
+        logger.debug("addIndicator() started.");
+
+        if (indicatorDTO.getValue().isEmpty()){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Indicator value may not be null or empty");
+        }
+
+        if (indicatorDTO.getClassification() == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Indicator classification may not be null");
+        }
+
+        if(lookupService.lookupIdExists(indicatorDTO.getClassification(), "classification")){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Classification with id " + indicatorDTO.getClassification() + " does not exist.");
+        }
+
+        if (indicatorDTO.getType() == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Indicator type may not be null");
+        }
+
+        if(lookupService.lookupIdExists(indicatorDTO.getType(), "indicator_type")){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Indicator type with id " + indicatorDTO.getType() + " does not exist.");
+        }
+
+        indicatorService.addIndicator(indicatorDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("");
+    }
+
 
 
 }

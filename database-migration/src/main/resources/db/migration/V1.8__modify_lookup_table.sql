@@ -37,3 +37,6 @@ insert into lookup(id, version, lookup_type, name, display_order)  values(16, 1,
 -- Modify Indicators table to include classification column
 ALTER TABLE indicators
 ADD COLUMN classification INTEGER NOT NULL;
+
+ALTER TABLE indicators
+ADD CONSTRAINT classification_fkey FOREIGN KEY (classification) REFERENCES lookup(id);
