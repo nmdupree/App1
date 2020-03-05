@@ -30,32 +30,32 @@ public class SetupTestRecords {
 
 
     /**
-     * OUDATED :: DO NOT USE
+     * OUTDATED :: DO NOT USE
      */
-    @Test
-    public void createTestReportsSlow(){
-        logger.debug("SetupTestRecords createTestRecords() called");
-        long startTime = System.currentTimeMillis();
-        int recordsCreated = 50000;
-        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
-        String sql = "INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) " +
-                     "VALUES (nextval('seq_table_ids'), ?, ?, ?, ?, now())";
-
-        for (int i = 0; i < recordsCreated; i++) {
-            int version = getRandomInt(1, 9);
-            String displayName = "display name " + i;
-            boolean reviewed = getRandomBool();
-            int priority = getRandomInt(1, 5);
-
-            jt.update(sql, version, displayName, reviewed, priority);
-
-            if (i % 1000 == 0) {
-                logger.debug("{} of 5000 Completed. Time elapsed: {}ms", i, System.currentTimeMillis() - startTime);
-            }
-        }
-        logger.debug("Total time elapsed: {}ms", System.currentTimeMillis() - startTime);
-        // 6678.0ms
-    }
+//    @Test
+//    public void createTestReportsSlow(){
+//        logger.debug("SetupTestRecords createTestRecords() called");
+//        long startTime = System.currentTimeMillis();
+//        int recordsCreated = 50000;
+//        JdbcTemplate jt = new JdbcTemplate(this.dataSource);
+//        String sql = "INSERT INTO reports (id, version, display_name, reviewed, priority, created_date) " +
+//                     "VALUES (nextval('seq_table_ids'), ?, ?, ?, ?, now())";
+//
+//        for (int i = 0; i < recordsCreated; i++) {
+//            int version = getRandomInt(1, 9);
+//            String displayName = "display name " + i;
+//            boolean reviewed = getRandomBool();
+//            int priority = getRandomInt(1, 5);
+//
+//            jt.update(sql, version, displayName, reviewed, priority);
+//
+//            if (i % 1000 == 0) {
+//                logger.debug("{} of 5000 Completed. Time elapsed: {}ms", i, System.currentTimeMillis() - startTime);
+//            }
+//        }
+//        logger.debug("Total time elapsed: {}ms", System.currentTimeMillis() - startTime);
+//        // 6678.0ms
+//    }
 
 
     /**

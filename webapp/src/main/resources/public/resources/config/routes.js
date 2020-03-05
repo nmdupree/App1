@@ -29,7 +29,10 @@
                 controller: 'viewReports',
                 controllerAs: 'viewReportsVM',
                 resolve: {
-
+                    // Inject reportsViewData into the viewReports controller
+                    reportsViewData: function(ReportFactory) {
+                        return ReportFactory.getAllReports();
+                    }
                 }
             }
         }

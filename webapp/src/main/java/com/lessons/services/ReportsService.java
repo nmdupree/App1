@@ -1,5 +1,6 @@
 package com.lessons.services;
 
+import com.lessons.models.GetReportDTO;
 import com.lessons.models.ReportByIdDTO;
 import com.lessons.models.AddReportDTO;
 import com.lessons.models.UpdateReportDTO;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -228,4 +230,16 @@ public class ReportsService {
     }
 
 
+    public List<GetReportDTO> getAllReports() {
+
+        String sql = "SELECT id, display_name, description, priority FROM reports ORDER BY id";
+
+        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(GetReportDTO.class);
+
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+
+        List<GetReportDTO> listOfReports = jt.query(sql, rowMapper);
+
+        return listOfReports;
+    }
 }

@@ -1,5 +1,6 @@
 package com.lessons.controllers;
 
+import com.lessons.models.GetReportDTO;
 import com.lessons.models.ReportByIdDTO;
 import com.lessons.models.AddReportDTO;
 import com.lessons.models.UpdateReportDTO;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @Controller("com.lessons.controllers.ReportsController")
@@ -115,6 +117,27 @@ public class ReportsController {
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(returnValue);
     }
+
+    /*************************************************************************
+     * REST endpoint /api/reports/all
+     * @return a list of reportGetDTOs
+     *************************************************************************/
+    @RequestMapping(value = "/api/reports/all", method = RequestMethod.GET, produces = "application/json")
+    public  ResponseEntity<?>  getAllReports() {
+
+        logger.debug("a thing");
+
+        List<GetReportDTO> allReports = reportsService.getAllReports();
+
+
+
+        // Return the string as plain-text
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(allReports);
+    }
+
+
 
     /*************************************************************************
      * REST endpoint /api/reports/add

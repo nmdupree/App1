@@ -8,7 +8,17 @@
         'ngMaterial',
         'ngSanitize',         // Used for rendering html content in $mdDialog popups
         'angularResizable',
-        'ui.router'
+        'ui.router',
+        'ui.grid',
+        'ui.grid.saveState',
+        'ui.grid.autoResize',
+        'ui.grid.selection',
+        'ui.grid.pagination',
+        'ui.grid.resizeColumns',
+        'ui.grid.moveColumns',
+        'ui.grid.exporter',
+        'ui.grid.edit',
+        'ui.grid.cellNav'
     ])
 
 

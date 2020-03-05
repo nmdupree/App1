@@ -20,6 +20,6 @@
     "angular-resizable": "1.2.0",
     "angular-sanitize": "1.7.9",
     "angular-scroll": "1.0.2",
-    "angular-ui-grid": "^4.8.3"
+    "angular-ui-grid": "4.8.3"
   }
 }
