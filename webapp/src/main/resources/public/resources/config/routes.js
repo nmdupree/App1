@@ -30,8 +30,12 @@
                 controllerAs: 'viewReportsVM',
                 resolve: {
                     // Inject reportsViewData into the viewReports controller
-                    reportsViewData: function(ReportFactory) {
+                    reportsViewData: function (ReportFactory) {
                         return ReportFactory.getAllReports();
+                    },
+                    // Inject lookupData into the viewReports controller
+                    lookupPriorities: function (LookupFactory) {
+                        return LookupFactory.getLookupWithTypeName('priority');
                     }
                 }
             }

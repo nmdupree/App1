@@ -232,7 +232,7 @@ public class ReportsService {
 
     public List<GetReportDTO> getAllReports() {
 
-        String sql = "SELECT id, display_name, description, priority FROM reports ORDER BY id";
+        String sql = "SELECT id, display_name, description, priority, created_date FROM reports ORDER BY id";
 
         BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(GetReportDTO.class);
 

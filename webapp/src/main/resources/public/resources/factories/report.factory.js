@@ -11,6 +11,7 @@
         ReportFactory.addReport = addReport;
         ReportFactory.getAllReports = getAllReports;
         ReportFactory.getAllReportsDummyData = getAllReportsDummyData;
+        ReportFactory.getAllReportsFiltered = getAllReportsFiltered;
 
         return ReportFactory;
 
@@ -53,6 +54,35 @@
 
             return allReports;
         }
+
+        /*
+         * Make a REST call that returns a subset of the reports
+         */
+        function getAllReportsFiltered(aFilters) {
+            console.log('getAllReportsFiltered() started.');
+
+            let dto = {
+                'filters': aFilters
+            };
+
+            return $http.get('./api/reports/all').then(function(results) {
+                // The REST call returned with a 200-299 status code
+                console.log('results.data=', results.data);
+
+                let allReports = [
+                    {id: 3, display_name: "rpt3.txt", priority: "high", "active": true}
+                ];
+
+                // So, return some data
+                let returnedMap = {
+                    'data': allReports,
+                    'total': 1
+                }
+
+                return returnedMap;
+            })
+        }
+
 
 
     }   // End of ReportFactory

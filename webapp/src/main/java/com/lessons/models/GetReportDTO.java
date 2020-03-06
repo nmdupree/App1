@@ -2,6 +2,8 @@ package com.lessons.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.sql.Timestamp;
+
 public class GetReportDTO {
 
     private int     id;
@@ -10,6 +12,17 @@ public class GetReportDTO {
 
     @JsonProperty("display_name")
     private String  displayName;
+
+    @JsonProperty("created_date")
+    private Timestamp createdDate;
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public int getId() {
         return id;
