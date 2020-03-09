@@ -1,9 +1,6 @@
 package com.lessons.services;
 
-import com.lessons.models.GetReportDTO;
-import com.lessons.models.ReportByIdDTO;
-import com.lessons.models.AddReportDTO;
-import com.lessons.models.UpdateReportDTO;
+import com.lessons.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +27,9 @@ public class ReportsService {
 
     @Resource
     private DataSource dataSource;
+
+    @Resource
+    private FilterService filterService;
 
     @Value("${bypass.id}")
     private int bypassId;
@@ -242,4 +242,40 @@ public class ReportsService {
 
         return listOfReports;
     }
+
+    public List<GetReportDTO> getFilteredReports(FilterDaddyDTO searchFilters) {
+
+        JdbcTemplate jt = new JdbcTemplate(dataSource);
+        BeanPropertyRowMapper rowMapper = new BeanPropertyRowMapper(GetReportDTO.class);
+
+        // Start the SQL SELECT statement
+        StringBuilder sqlSB = new StringBuilder();
+        sqlSB.append("SELECT id, display_name, description, priority, created_date FROM reports");
+
+        // Generate SQL filter statements
+        SqlInfoDTO filterClauses = filterService.getSqlInfoForFilters(searchFilters);
+
+        // Append generated clauses following SQL order of operations
+
+        String whereClause = filterClauses.getWhereClause();
+        if (!whereClause.isEmpty()){
+            sqlSB.append(" ");
+            sqlSB.append(whereClause);
+        }
+
+        // Hard code the ORDER BY for the moment
+        sqlSB.append(" ORDER BY id");
+
+        String limitClause = filterClauses.getLimitClause();
+        if (!limitClause.isEmpty()){
+            sqlSB.append(" ");
+            sqlSB.append(limitClause);
+        }
+
+        String sql = sqlSB.toString();
+        List<GetReportDTO> listOfReports = jt.query(sql, rowMapper);
+
+        return listOfReports;
+    }
+
 }

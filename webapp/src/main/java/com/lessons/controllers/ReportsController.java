@@ -1,9 +1,6 @@
 package com.lessons.controllers;
 
-import com.lessons.models.GetReportDTO;
-import com.lessons.models.ReportByIdDTO;
-import com.lessons.models.AddReportDTO;
-import com.lessons.models.UpdateReportDTO;
+import com.lessons.models.*;
 import com.lessons.services.ReportsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller("com.lessons.controllers.ReportsController")
 public class ReportsController {
@@ -33,6 +30,8 @@ public class ReportsController {
     public void init() {
         logger.debug("ReportsController post contructor called");
     }
+
+    private final int MAX_PAGE_SIZE = 10000;
 
     /*************************************************************************
      * REST endpoint /api/getStuff
@@ -251,6 +250,54 @@ public class ReportsController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("");
+    }
+
+    @RequestMapping(value = "/api/reports/filtered", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> getFilteredReports(@RequestBody FilterDaddyDTO searchFilters){
+
+        logger.debug("Search filtered reports called.");
+
+
+        if(searchFilters.getOffset() == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Offset value may not be null.");
+        }
+        if(searchFilters.getOffset() < 0){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Offset may not be a negative number.");
+        }
+        if(searchFilters.getPageSize() == null){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Page size may not be null.");
+        }
+        if(searchFilters.getPageSize() < 1){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Page size must be greater than 0.");
+        }
+        if(searchFilters.getPageSize() > MAX_PAGE_SIZE){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body("Page size must be less than " + MAX_PAGE_SIZE + " .");
+        }
+
+
+
+        List<GetReportDTO> filteredReports = reportsService.getFilteredReports(searchFilters);
+
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(filteredReports);
     }
 
 }
